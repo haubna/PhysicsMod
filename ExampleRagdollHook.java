@@ -224,7 +224,7 @@ public class ExampleRagdollHook implements RagdollHook {
 			int rightLegOffset = 5;
 			int bodyOffset = 6;
 			int lowerBodyOffset = 7;
-//			
+			
 			ragdoll.addConnection(headOffset, bodyOffset);
 			ragdoll.addConnection(noseOffset, headOffset, true);
 			ragdoll.addConnection(leftArmOffset, bodyOffset);
