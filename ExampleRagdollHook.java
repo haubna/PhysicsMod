@@ -8,10 +8,12 @@ import net.diebuddies.physics.ragdoll.RagdollMapper.Counter;
 import net.minecraft.client.model.ModelPart;
 import net.minecraft.client.render.entity.model.AnimalModel;
 import net.minecraft.client.render.entity.model.ArmorStandEntityModel;
+import net.minecraft.client.render.entity.model.AxolotlEntityModel;
 import net.minecraft.client.render.entity.model.BatEntityModel;
 import net.minecraft.client.render.entity.model.BeeEntityModel;
 import net.minecraft.client.render.entity.model.BipedEntityModel;
 import net.minecraft.client.render.entity.model.ChickenEntityModel;
+import net.minecraft.client.render.entity.model.CodEntityModel;
 import net.minecraft.client.render.entity.model.CreeperEntityModel;
 import net.minecraft.client.render.entity.model.DolphinEntityModel;
 import net.minecraft.client.render.entity.model.DonkeyEntityModel;
@@ -20,14 +22,19 @@ import net.minecraft.client.render.entity.model.EndermiteEntityModel;
 import net.minecraft.client.render.entity.model.EntityModel;
 import net.minecraft.client.render.entity.model.FoxEntityModel;
 import net.minecraft.client.render.entity.model.GhastEntityModel;
+import net.minecraft.client.render.entity.model.GoatEntityModel;
 import net.minecraft.client.render.entity.model.GuardianEntityModel;
 import net.minecraft.client.render.entity.model.HoglinEntityModel;
 import net.minecraft.client.render.entity.model.HorseEntityModel;
 import net.minecraft.client.render.entity.model.IllagerEntityModel;
 import net.minecraft.client.render.entity.model.IronGolemEntityModel;
+import net.minecraft.client.render.entity.model.LargePufferfishEntityModel;
+import net.minecraft.client.render.entity.model.LargeTropicalFishEntityModel;
 import net.minecraft.client.render.entity.model.LlamaEntityModel;
+import net.minecraft.client.render.entity.model.MediumPufferfishEntityModel;
 import net.minecraft.client.render.entity.model.OcelotEntityModel;
 import net.minecraft.client.render.entity.model.ParrotEntityModel;
+import net.minecraft.client.render.entity.model.PhantomEntityModel;
 import net.minecraft.client.render.entity.model.PlayerEntityModel;
 import net.minecraft.client.render.entity.model.QuadrupedEntityModel;
 import net.minecraft.client.render.entity.model.RabbitEntityModel;
@@ -36,6 +43,9 @@ import net.minecraft.client.render.entity.model.SalmonEntityModel;
 import net.minecraft.client.render.entity.model.SheepEntityModel;
 import net.minecraft.client.render.entity.model.SilverfishEntityModel;
 import net.minecraft.client.render.entity.model.SinglePartEntityModel;
+import net.minecraft.client.render.entity.model.SkeletonEntityModel;
+import net.minecraft.client.render.entity.model.SmallPufferfishEntityModel;
+import net.minecraft.client.render.entity.model.SmallTropicalFishEntityModel;
 import net.minecraft.client.render.entity.model.SnowGolemEntityModel;
 import net.minecraft.client.render.entity.model.SpiderEntityModel;
 import net.minecraft.client.render.entity.model.SquidEntityModel;
@@ -43,6 +53,7 @@ import net.minecraft.client.render.entity.model.StriderEntityModel;
 import net.minecraft.client.render.entity.model.VillagerResemblingModel;
 import net.minecraft.client.render.entity.model.WitherEntityModel;
 import net.minecraft.entity.Entity;
+import net.minecraft.entity.boss.dragon.EnderDragonEntity;
 import net.minecraft.entity.passive.AbstractDonkeyEntity;
 
 public class ExampleRagdollHook implements RagdollHook {
@@ -107,12 +118,23 @@ public class ExampleRagdollHook implements RagdollHook {
 			AnimalModel animal = (AnimalModel) model;
 			Iterator<ModelPart> head = animal.getHeadParts().iterator();
 			Counter counter = new Counter();
+
+			int headOffset = 0;
 			
-			while (head.hasNext()) {
-				RagdollMapper.getCuboids(ragdoll, head.next(), counter);
+			if (model instanceof GoatEntityModel) {
+				counter.count = 6;
+				headOffset = 3;
+				ragdoll.addConnection(0, headOffset, true);
+				ragdoll.addConnection(1, headOffset, true);
+				ragdoll.addConnection(2, headOffset, true);
+				ragdoll.addConnection(4, headOffset, true);
+				ragdoll.addConnection(5, headOffset, true);
+			} else {
+				while (head.hasNext()) {
+					RagdollMapper.getCuboids(ragdoll, head.next(), counter);
+				}
 			}
 			
-			int headOffset = 0;
 			int bodyOffset = counter.count;
 			Iterator<ModelPart> body = animal.getBodyParts().iterator();
 			int rightArmOffset = RagdollMapper.getCuboids(ragdoll, body.next(), counter);
@@ -703,11 +725,6 @@ public class ExampleRagdollHook implements RagdollHook {
 			ragdoll.addConnection(tail, bodyOffset);
 			ragdoll.addConnection(mane, neckOffset, true);
 			ragdoll.addConnection(upperMouth, neckOffset, true);
-			
-			// for testing
-//			/summon horse ~ ~ ~ {Tame:1,SaddleItem:{id:saddle,Count:1},ArmorItem:{id:iron_horse_armor,Count:1}}
-//			/summon horse ~ ~ ~ {Tame:1,SaddleItem:{id:saddle,Count:1}}
-//			/summon donkey ~ ~ ~ {Tame:1,SaddleItem:{id:saddle,Count:1},ChestedHorse:1}
 		} else if (model instanceof LlamaEntityModel) {
 			int headOffset = 0;
 			int neckOffset = 1;
@@ -788,6 +805,264 @@ public class ExampleRagdollHook implements RagdollHook {
 			ragdoll.addConnection(rightFinOffset, bodyFrontOffset, true);
 			ragdoll.addConnection(topBackFinOffset, bodyBackOffset, true);
 			ragdoll.addConnection(backFinOffset, bodyBackOffset, true);
+		} else if (model instanceof AxolotlEntityModel) {
+			int bodyOffset = 0;
+			int bodyGillsOffset = 1;
+			int headOffset = 2;
+			int topGillsOffset = 3;
+			int leftGillsOffset = 4;
+			int rightGillsOffset = 5;
+			int rightFrontLegOffset = 6;
+			int rightHindLegffset = 7;
+			int tailOffset = 8;
+			int leftHindLegOffset = 9;
+			int leftFrontLegOffset = 10;
+			
+			ragdoll.addConnection(headOffset, bodyOffset);
+			ragdoll.addConnection(bodyGillsOffset, bodyOffset, true);
+			ragdoll.addConnection(topGillsOffset, bodyOffset, true);
+			ragdoll.addConnection(leftGillsOffset, bodyOffset, true);
+			ragdoll.addConnection(rightGillsOffset, bodyOffset, true);
+			
+			ragdoll.addConnection(rightFrontLegOffset, bodyOffset, true);
+			ragdoll.addConnection(rightHindLegffset, bodyOffset, true);
+			ragdoll.addConnection(leftHindLegOffset, bodyOffset, true);
+			ragdoll.addConnection(leftFrontLegOffset, bodyOffset, true);
+			ragdoll.addConnection(tailOffset, bodyOffset, true);
+		} else if (model instanceof PhantomEntityModel) {
+			int bodyOffset = 0;
+			int headOffset = 1;
+			int rightWingBaseOffset = 2;
+			int rightWingTipOffset = 3;
+			int tailBaseOffset = 4;
+			int tailTipOffset = 5;
+			int leftWingBaseOffset = 6;
+			int leftWingTipOffset = 7;
+			
+			ragdoll.addConnection(headOffset, bodyOffset);
+			ragdoll.addConnection(rightWingBaseOffset, bodyOffset);
+			ragdoll.addConnection(tailBaseOffset, bodyOffset);
+			ragdoll.addConnection(leftWingBaseOffset, bodyOffset);
+			
+			ragdoll.addConnection(rightWingTipOffset, rightWingBaseOffset, true);
+			ragdoll.addConnection(tailTipOffset, tailBaseOffset, true);
+			ragdoll.addConnection(leftWingTipOffset, leftWingBaseOffset, true);
+		} else if (model instanceof CodEntityModel) {
+			int headOffset = 0;
+			int noseOffset = 1;
+			int leftFinOffset = 2;
+			int topFinOffset = 3;
+			int rightFinOffset = 4;
+			int bodyOffset = 5;
+			int tailFinOffset = 6;
+			
+			ragdoll.addConnection(headOffset, bodyOffset);
+			ragdoll.addConnection(noseOffset, headOffset, true);
+			ragdoll.addConnection(tailFinOffset, bodyOffset, true);
+			ragdoll.addConnection(leftFinOffset, bodyOffset, true);
+			ragdoll.addConnection(topFinOffset, bodyOffset, true);
+			ragdoll.addConnection(rightFinOffset, bodyOffset, true);
+		} else if (model instanceof SmallPufferfishEntityModel) {
+			int rightEyeOffset = 0;
+			int leftFinOffset = 1;
+			int rightFinOffset = 2;
+			int leftEyeOffset = 3;
+			int bodyOffset = 4;
+			int backFinOffset = 5;
+			
+			ragdoll.addConnection(rightEyeOffset, bodyOffset, true);
+			ragdoll.addConnection(leftEyeOffset, bodyOffset, true);
+			ragdoll.addConnection(leftFinOffset, bodyOffset, true);
+			ragdoll.addConnection(backFinOffset, bodyOffset, true);
+			ragdoll.addConnection(rightFinOffset, bodyOffset, true);
+		} else if (model instanceof MediumPufferfishEntityModel) {
+			int leftBlueFinOffset = 0;
+			int topBackFinOffset = 1;
+			int leftBackFinOffset = 2;
+			int leftFrontFinOffset = 3;
+			int bottomFrontFinOffset = 4;
+			int rightFrontFinOffset = 5;
+			int rightBackFinOffset = 6;
+			int bodyOffset = 7;
+			int topFrontFinOffset = 8;
+			int bottomBackFinOffset = 9;
+			int rightBlueFinOffset = 10;
+			
+			ragdoll.addConnection(leftBlueFinOffset, bodyOffset, true);
+			ragdoll.addConnection(topBackFinOffset, bodyOffset, true);
+			ragdoll.addConnection(leftBackFinOffset, bodyOffset, true);
+			ragdoll.addConnection(leftFrontFinOffset, bodyOffset, true);
+			ragdoll.addConnection(bottomFrontFinOffset, bodyOffset, true);
+			ragdoll.addConnection(rightFrontFinOffset, bodyOffset, true);
+			ragdoll.addConnection(rightBackFinOffset, bodyOffset, true);
+			ragdoll.addConnection(topFrontFinOffset, bodyOffset, true);
+			ragdoll.addConnection(bottomBackFinOffset, bodyOffset, true);
+			ragdoll.addConnection(rightBlueFinOffset, bodyOffset, true);
+		} else if (model instanceof LargePufferfishEntityModel) {
+			int leftBlueFinOffset = 0;
+			int topBackFinOffset = 1;
+			int leftBackFinOffset = 2;
+			int leftFrontFinOffset = 3;
+			int bottomFrontFinOffset = 4;
+			int bodyOffset = 5;
+			int rightFrontFinOffset = 6;
+			int rightBackFinOffset = 7;
+			int topFrontFinOffset = 8;
+			int bottomBackFinOffset = 9;
+			int rightBlueFinOffset = 10;
+			int rightBlueBackFinOffset = 11;
+			int topBlueFrontFinOffset = 12;
+			
+			ragdoll.addConnection(leftBlueFinOffset, bodyOffset, true);
+			ragdoll.addConnection(topBackFinOffset, bodyOffset, true);
+			ragdoll.addConnection(leftBackFinOffset, bodyOffset, true);
+			ragdoll.addConnection(leftFrontFinOffset, bodyOffset, true);
+			ragdoll.addConnection(bottomFrontFinOffset, bodyOffset, true);
+			ragdoll.addConnection(rightFrontFinOffset, bodyOffset, true);
+			ragdoll.addConnection(rightBackFinOffset, bodyOffset, true);
+			ragdoll.addConnection(topFrontFinOffset, bodyOffset, true);
+			ragdoll.addConnection(bottomBackFinOffset, bodyOffset, true);
+			ragdoll.addConnection(rightBlueBackFinOffset, bodyOffset, true);
+			ragdoll.addConnection(topBlueFrontFinOffset, bodyOffset, true);
+			ragdoll.addConnection(rightBlueFinOffset, bodyOffset, true);
+		} else if (model instanceof LargeTropicalFishEntityModel) {
+			int leftFinOffset = 0;
+			int topFinOffset = 1;
+			int tailOffset = 2;
+			int rightFinOffset = 3;
+			int bodyOffset = 4;
+			int bottomFinOffset = 5;
+			
+			ragdoll.addConnection(leftFinOffset, bodyOffset, true);
+			ragdoll.addConnection(topFinOffset, bodyOffset, true);
+			ragdoll.addConnection(bottomFinOffset, bodyOffset, true);
+			ragdoll.addConnection(tailOffset, bodyOffset, true);
+			ragdoll.addConnection(rightFinOffset, bodyOffset, true);
+			
+			// overlay rendering not supported with ragdolls right now
+//			ragdoll.addConnection(leftFinOffset + 6, bodyOffset, true);
+//			ragdoll.addConnection(topFinOffset + 6, bodyOffset, true);
+//			ragdoll.addConnection(bottomFinOffset + 6, bodyOffset, true);
+//			ragdoll.addConnection(tailOffset + 6, bodyOffset, true);
+//			ragdoll.addConnection(rightFinOffset + 6, bodyOffset, true);
+//			ragdoll.addConnection(bodyOffset + 6, bodyOffset, true);
+		} else if (model instanceof SmallTropicalFishEntityModel) {
+			int leftFinOffset = 0;
+			int topFinOffset = 1;
+			int tailOffset = 2;
+			int rightFinOffset = 3;
+			int bodyOffset = 4;
+			
+			ragdoll.addConnection(leftFinOffset, bodyOffset, true);
+			ragdoll.addConnection(topFinOffset, bodyOffset, true);
+			ragdoll.addConnection(tailOffset, bodyOffset, true);
+			ragdoll.addConnection(rightFinOffset, bodyOffset, true);
+
+			// overlay rendering not supported with ragdolls right now
+//			ragdoll.addConnection(leftFinOffset + 5, bodyOffset, true);
+//			ragdoll.addConnection(topFinOffset + 5, bodyOffset, true);
+//			ragdoll.addConnection(tailOffset + 5, bodyOffset, true);
+//			ragdoll.addConnection(rightFinOffset + 5, bodyOffset, true);
+//			ragdoll.addConnection(bodyOffset + 5, bodyOffset, true);
+		} else if (entity instanceof EnderDragonEntity) {
+			// ender dragon model is null because ender dragon has no living entity renderer and thus
+			// we have no access to it's model
+			for (int i = 0; i < 5; i++) {
+				// do neck
+				ragdoll.addConnection(i * 2 + 1, i * 2, true);
+				
+				if (i != 0) ragdoll.addConnection((i - 1) * 2, i * 2);
+			}
+			
+			int offset = 10;
+
+			int head0 = 0 + offset;
+			int head1 = 1 + offset;
+			int head2 = 2 + offset;
+			int head3 = 3 + offset;
+			int head4 = 4 + offset;
+			int head5 = 5 + offset;
+			int jaw = 6 + offset;
+			
+			ragdoll.addConnection(jaw, head0, true);
+			ragdoll.addConnection(head1, head0, true);
+			ragdoll.addConnection(head2, head0, true);
+			ragdoll.addConnection(head3, head0, true);
+			ragdoll.addConnection(head4, head0, true);
+			ragdoll.addConnection(head5, head0, true);
+			
+			ragdoll.addConnection(head0, 8);
+
+			int body0 = 7 + offset;
+			int body1 = 8 + offset;
+			int body2 = 9 + offset;
+			int body3 = 10 + offset;
+			
+			int leftWing = 11 + offset;
+			int leftWingTexture = 12 + offset;
+			int leftWingTip = 13 + offset;
+			int leftWingTipTexture = 14 + offset;
+			int leftFrontLeg = 15 + offset;
+			int leftFrontLegTip = 16 + offset;
+			int leftFrontFoot = 17 + offset;
+			int leftHindLeg = 18 + offset;
+			int leftHindLegTip = 19 + offset;
+			int leftHindFoot = 20 + offset;
+			
+			int rightWing = 21 + offset;
+			int rightWingTexture = 22 + offset;
+			int rightWingTip = 23 + offset;
+			int rightWingTipTexture = 24 + offset;
+			int rightFrontLeg = 25 + offset;
+			int rightFrontLegTip = 26 + offset;
+			int rightFrontFoot = 27 + offset;
+			int rightHindLeg = 28 + offset;
+			int rightHindLegTip = 29 + offset;
+			int rightHindFoot = 30 + offset;
+			
+			ragdoll.addConnection(0, body0);
+			
+			ragdoll.addConnection(body1, body0, true);
+			ragdoll.addConnection(body2, body0, true);
+			ragdoll.addConnection(body3, body0, true);
+			
+			ragdoll.addConnection(rightWing, body0);
+			ragdoll.addConnection(leftWing, body0);
+			
+			ragdoll.addConnection(rightWingTip, rightWing);
+			ragdoll.addConnection(leftWingTip, leftWing);
+			
+			ragdoll.addConnection(rightWingTexture, rightWing, true);
+			ragdoll.addConnection(leftWingTexture, leftWing, true);
+			
+			ragdoll.addConnection(rightWingTipTexture, rightWingTip, true);
+			ragdoll.addConnection(leftWingTipTexture, leftWingTip, true);
+			
+			ragdoll.addConnection(rightFrontLeg, body0);
+			ragdoll.addConnection(rightHindLeg, body0);
+			ragdoll.addConnection(leftFrontLeg, body0);
+			ragdoll.addConnection(leftHindLeg, body0);
+			
+			ragdoll.addConnection(rightFrontLegTip, rightFrontLeg);
+			ragdoll.addConnection(rightHindLegTip, rightHindLeg);
+			ragdoll.addConnection(leftFrontLegTip, leftFrontLeg);
+			ragdoll.addConnection(leftHindLegTip, leftHindLeg);
+			
+			ragdoll.addConnection(rightFrontFoot, rightFrontLegTip);
+			ragdoll.addConnection(rightHindFoot, rightHindLegTip);
+			ragdoll.addConnection(leftFrontFoot, leftFrontLegTip);
+			ragdoll.addConnection(leftHindFoot, leftHindLegTip);
+			
+			offset = 41;
+
+			for (int i = 0; i < 12; i++) {
+				// do tail
+				ragdoll.addConnection(i * 2 + 1 + offset, i * 2 + offset, true);
+				
+				if (i != 0) ragdoll.addConnection((i - 1) * 2 + offset, i * 2 + offset);
+			}
+			
+			ragdoll.addConnection(offset, body0);
 		}
 	}
 
@@ -837,6 +1112,27 @@ public class ExampleRagdollHook implements RagdollHook {
 			}
 			
 			while (blockifiedEntity.size() > total) {
+				blockifiedEntity.remove(blockifiedEntity.size() - 1);
+			}
+		} else if (model instanceof PhantomEntityModel) {
+			while (blockifiedEntity.size() > RagdollMapper.countModelParts(model)) {
+				blockifiedEntity.remove(blockifiedEntity.size() - 1);
+			}
+		} else if (model instanceof LargeTropicalFishEntityModel) {
+			while (blockifiedEntity.size() > RagdollMapper.countModelParts(model)) {
+				blockifiedEntity.remove(blockifiedEntity.size() - 1);
+			}
+		} else if (model instanceof SmallTropicalFishEntityModel) {
+			while (blockifiedEntity.size() > RagdollMapper.countModelParts(model)) {
+				blockifiedEntity.remove(blockifiedEntity.size() - 1);
+			}
+		} else if (model instanceof SkeletonEntityModel) {
+			while (blockifiedEntity.size() > RagdollMapper.countModelParts(model)) {
+				blockifiedEntity.remove(blockifiedEntity.size() - 1);
+			}
+		} else if (entity instanceof EnderDragonEntity) {
+			// 31 for all the model parts and the neck and tail get rendered additionally (17 * 2)
+			while (blockifiedEntity.size() > 31 + 17 * 2) {
 				blockifiedEntity.remove(blockifiedEntity.size() - 1);
 			}
 		}
