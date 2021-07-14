@@ -6,7 +6,7 @@ You can use it to add ragdoll physics to your mod entities. First make sure that
 You will need to create a __RagdollHook__ and add it via __RagdollMapper.addHook(RagdollHook)__. A ragdoll hook example can be found in this repo. 
 
 ## RagdollHook
-***filterCuboidsFromEntities*** is to filter excessive cubes from the model that can get create through some feature overlays in Minecraft and would cause multiple cube drops of the same model.
+***filterCuboidsFromEntities*** is to filter excessive cubes from the model that can get created through some feature overlays in Minecraft and would cause multiple cube drops of the same model.
 
 ***map*** is needed to create the connections between the cubes. If you are not sure which cubes should get connected you can get some info via __RagdollMapper.printModelParts(model)__.
 
