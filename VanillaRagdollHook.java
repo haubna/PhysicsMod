@@ -56,7 +56,7 @@ import net.minecraft.entity.Entity;
 import net.minecraft.entity.boss.dragon.EnderDragonEntity;
 import net.minecraft.entity.passive.AbstractDonkeyEntity;
 
-public class ExampleRagdollHook implements RagdollHook {
+public class VanillaRagdollHook implements RagdollHook {
 
 	@Override
 	public void map(RagdollPX ragdoll, Entity entity, EntityModel model) {
@@ -109,6 +109,12 @@ public class ExampleRagdollHook implements RagdollHook {
 					ragdoll.addConnection(leftBodyStickOffset, bodyOffset, true);
 					ragdoll.addConnection(shoulderStickOffset, bodyOffset, true);
 				} catch (Exception e) {}
+			} else if (model instanceof SkeletonEntityModel) {
+				if (ragdoll.bodies.size() > RagdollMapper.countModelParts(model)) {
+					// overlay rendering not supported with ragdolls right now
+					// since fixed joints can't use different textures
+					ragdoll.addOverlayConnections();
+				}
 			}
 			
 			while (body.hasNext()) {
@@ -933,19 +939,15 @@ public class ExampleRagdollHook implements RagdollHook {
 			int bodyOffset = 4;
 			int bottomFinOffset = 5;
 			
-			ragdoll.addConnection(leftFinOffset, bodyOffset, true);
-			ragdoll.addConnection(topFinOffset, bodyOffset, true);
-			ragdoll.addConnection(bottomFinOffset, bodyOffset, true);
-			ragdoll.addConnection(tailOffset, bodyOffset, true);
-			ragdoll.addConnection(rightFinOffset, bodyOffset, true);
+			ragdoll.addConnection(leftFinOffset, bodyOffset, true, true);
+			ragdoll.addConnection(topFinOffset, bodyOffset, true, true);
+			ragdoll.addConnection(bottomFinOffset, bodyOffset, true, true);
+			ragdoll.addConnection(tailOffset, bodyOffset, true, true);
+			ragdoll.addConnection(rightFinOffset, bodyOffset, true, true);
 			
 			// overlay rendering not supported with ragdolls right now
-//			ragdoll.addConnection(leftFinOffset + 6, bodyOffset, true);
-//			ragdoll.addConnection(topFinOffset + 6, bodyOffset, true);
-//			ragdoll.addConnection(bottomFinOffset + 6, bodyOffset, true);
-//			ragdoll.addConnection(tailOffset + 6, bodyOffset, true);
-//			ragdoll.addConnection(rightFinOffset + 6, bodyOffset, true);
-//			ragdoll.addConnection(bodyOffset + 6, bodyOffset, true);
+			// since fixed joints can't use different textures
+			ragdoll.addOverlayConnections(true);
 		} else if (model instanceof SmallTropicalFishEntityModel) {
 			int leftFinOffset = 0;
 			int topFinOffset = 1;
@@ -953,17 +955,14 @@ public class ExampleRagdollHook implements RagdollHook {
 			int rightFinOffset = 3;
 			int bodyOffset = 4;
 			
-			ragdoll.addConnection(leftFinOffset, bodyOffset, true);
-			ragdoll.addConnection(topFinOffset, bodyOffset, true);
-			ragdoll.addConnection(tailOffset, bodyOffset, true);
-			ragdoll.addConnection(rightFinOffset, bodyOffset, true);
+			ragdoll.addConnection(leftFinOffset, bodyOffset, true, true);
+			ragdoll.addConnection(topFinOffset, bodyOffset, true, true);
+			ragdoll.addConnection(tailOffset, bodyOffset, true, true);
+			ragdoll.addConnection(rightFinOffset, bodyOffset, true, true);
 
 			// overlay rendering not supported with ragdolls right now
-//			ragdoll.addConnection(leftFinOffset + 5, bodyOffset, true);
-//			ragdoll.addConnection(topFinOffset + 5, bodyOffset, true);
-//			ragdoll.addConnection(tailOffset + 5, bodyOffset, true);
-//			ragdoll.addConnection(rightFinOffset + 5, bodyOffset, true);
-//			ragdoll.addConnection(bodyOffset + 5, bodyOffset, true);
+			// since fixed joints can't use different textures
+			ragdoll.addOverlayConnections(true);
 		} else if (entity instanceof EnderDragonEntity) {
 			// ender dragon model is null because ender dragon has no living entity renderer and thus
 			// we have no access to it's model
@@ -1115,18 +1114,6 @@ public class ExampleRagdollHook implements RagdollHook {
 				blockifiedEntity.remove(blockifiedEntity.size() - 1);
 			}
 		} else if (model instanceof PhantomEntityModel) {
-			while (blockifiedEntity.size() > RagdollMapper.countModelParts(model)) {
-				blockifiedEntity.remove(blockifiedEntity.size() - 1);
-			}
-		} else if (model instanceof LargeTropicalFishEntityModel) {
-			while (blockifiedEntity.size() > RagdollMapper.countModelParts(model)) {
-				blockifiedEntity.remove(blockifiedEntity.size() - 1);
-			}
-		} else if (model instanceof SmallTropicalFishEntityModel) {
-			while (blockifiedEntity.size() > RagdollMapper.countModelParts(model)) {
-				blockifiedEntity.remove(blockifiedEntity.size() - 1);
-			}
-		} else if (model instanceof SkeletonEntityModel) {
 			while (blockifiedEntity.size() > RagdollMapper.countModelParts(model)) {
 				blockifiedEntity.remove(blockifiedEntity.size() - 1);
 			}
