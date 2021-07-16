@@ -52,6 +52,7 @@ import net.minecraft.client.render.entity.model.SquidEntityModel;
 import net.minecraft.client.render.entity.model.StriderEntityModel;
 import net.minecraft.client.render.entity.model.VillagerResemblingModel;
 import net.minecraft.client.render.entity.model.WitherEntityModel;
+import net.minecraft.client.render.entity.model.ZombieVillagerEntityModel;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.boss.dragon.EnderDragonEntity;
 import net.minecraft.entity.passive.AbstractDonkeyEntity;
@@ -109,12 +110,10 @@ public class VanillaRagdollHook implements RagdollHook {
 					ragdoll.addConnection(leftBodyStickOffset, bodyOffset, true);
 					ragdoll.addConnection(shoulderStickOffset, bodyOffset, true);
 				} catch (Exception e) {}
-			} else if (model instanceof SkeletonEntityModel) {
-				if (ragdoll.bodies.size() > RagdollMapper.countModelParts(model)) {
-					// overlay rendering not supported with ragdolls right now
-					// since fixed joints can't use different textures
-					ragdoll.addOverlayConnections();
-				}
+			} else if (model instanceof SkeletonEntityModel || model instanceof DrownedEntityModel) {
+				// this adds support for strays
+				if (RagdollMapper.countModelParts(entity, model) < ragdoll.bodies.size())
+					ragdoll.addOverlayConnections(true);
 			}
 			
 			while (body.hasNext()) {
@@ -366,6 +365,10 @@ public class VanillaRagdollHook implements RagdollHook {
 			ragdoll.addConnection(rightLegOffset, bodyOffset);
 			ragdoll.addConnection(leftLegOffset, bodyOffset);
 			ragdoll.addConnection(armsOffset, bodyOffset);
+			
+			// clothing not yet supported for villagers
+//			if (RagdollMapper.countModelParts(entity, model) < ragdoll.bodies.size())
+//				ragdoll.addOverlayConnections(true);
 		} else if (model instanceof IllagerEntityModel) {
 			int headOffset = 0;
 			int noseOffset = 1;
@@ -382,6 +385,9 @@ public class VanillaRagdollHook implements RagdollHook {
 			ragdoll.addConnection(rightLegOffset, bodyOffset);
 			ragdoll.addConnection(leftArmOffset, bodyOffset);
 			ragdoll.addConnection(bodyOffset + 1, bodyOffset, true);
+			
+			if (RagdollMapper.countModelParts(entity, model) < ragdoll.bodies.size())
+				ragdoll.addOverlayConnections(true);
 		} else if (model instanceof StriderEntityModel) {
 			int leftLegOffset = 0;
 			int rightLegOffset = 1;
@@ -731,6 +737,9 @@ public class VanillaRagdollHook implements RagdollHook {
 			ragdoll.addConnection(tail, bodyOffset);
 			ragdoll.addConnection(mane, neckOffset, true);
 			ragdoll.addConnection(upperMouth, neckOffset, true);
+			
+			if (RagdollMapper.countModelParts(entity, model) < ragdoll.bodies.size())
+				ragdoll.addOverlayConnections(true);
 		} else if (model instanceof LlamaEntityModel) {
 			int headOffset = 0;
 			int neckOffset = 1;
@@ -755,6 +764,9 @@ public class VanillaRagdollHook implements RagdollHook {
 			ragdoll.addConnection(rightHindLegOffset, bodyOffset);
 			ragdoll.addConnection(leftHindLegOffset, bodyOffset);
 			ragdoll.addConnection(leftFrontLegOffset, bodyOffset);
+			
+			if (RagdollMapper.countModelParts(entity, model) < ragdoll.bodies.size())
+				ragdoll.addOverlayConnections(true);
 		} else if (model instanceof HoglinEntityModel) {
 			AnimalModel animal = (AnimalModel) model;
 			Iterator<ModelPart> head = animal.getHeadParts().iterator();
@@ -1067,6 +1079,10 @@ public class VanillaRagdollHook implements RagdollHook {
 
 	@Override
 	public void filterCuboidsFromEntities(List<PhysicsEntity> blockifiedEntity, Entity entity, EntityModel model) {
+		// when ragdolls are enabled you don't want to filter overlays
+		// like the dots on horses
+		boolean ragdollsEnabled = RagdollMapper.areRagdollsEnabled(entity);
+		
 		if (model instanceof IronGolemEntityModel) {
 			while (blockifiedEntity.size() > 8) {
 				blockifiedEntity.remove(blockifiedEntity.size() - 1);
@@ -1075,16 +1091,8 @@ public class VanillaRagdollHook implements RagdollHook {
 			while (blockifiedEntity.size() > 11) {
 				blockifiedEntity.remove(blockifiedEntity.size() - 1);
 			}
-		} else if (model instanceof VillagerResemblingModel) {
-			while (blockifiedEntity.size() > 11) {
-				blockifiedEntity.remove(blockifiedEntity.size() - 1);
-			}
 		} else if (model instanceof StriderEntityModel) {
 			while (blockifiedEntity.size() > 9) {
-				blockifiedEntity.remove(blockifiedEntity.size() - 1);
-			}
-		} else if (model instanceof IllagerEntityModel) {
-			while (blockifiedEntity.size() > 8) {
 				blockifiedEntity.remove(blockifiedEntity.size() - 1);
 			}
 		} else if (model instanceof WitherEntityModel) {
@@ -1095,32 +1103,25 @@ public class VanillaRagdollHook implements RagdollHook {
 			while (blockifiedEntity.size() > 6) {
 				blockifiedEntity.remove(blockifiedEntity.size() - 1);
 			}
-		} else if (model instanceof DrownedEntityModel) {
-			while (blockifiedEntity.size() > 7) {
-				blockifiedEntity.remove(blockifiedEntity.size() - 1);
-			}
-		} else if (model instanceof HorseEntityModel) {
-			while (blockifiedEntity.size() > RagdollMapper.countModelParts(model)) {
-				blockifiedEntity.remove(blockifiedEntity.size() - 1);
-			}
-		} else if (model instanceof LlamaEntityModel) {
-			int total = 9;
-			
-			if (!((AbstractDonkeyEntity) entity).isBaby() && ((AbstractDonkeyEntity) entity).hasChest()) {
-				total = 11;
-			}
-			
-			while (blockifiedEntity.size() > total) {
-				blockifiedEntity.remove(blockifiedEntity.size() - 1);
-			}
-		} else if (model instanceof PhantomEntityModel) {
-			while (blockifiedEntity.size() > RagdollMapper.countModelParts(model)) {
+		} else if (model instanceof ZombieVillagerEntityModel) {
+			while (blockifiedEntity.size() > 10) {
 				blockifiedEntity.remove(blockifiedEntity.size() - 1);
 			}
 		} else if (entity instanceof EnderDragonEntity) {
 			// 31 for all the model parts and the neck and tail get rendered additionally (17 * 2)
 			while (blockifiedEntity.size() > 31 + 17 * 2) {
 				blockifiedEntity.remove(blockifiedEntity.size() - 1);
+			}
+		} else if (model instanceof PhantomEntityModel || model instanceof VillagerResemblingModel) {
+			while (blockifiedEntity.size() > RagdollMapper.countModelParts(entity, model)) {
+				blockifiedEntity.remove(blockifiedEntity.size() - 1);
+			}
+		} else if (model instanceof LargeTropicalFishEntityModel || model instanceof SmallTropicalFishEntityModel || model instanceof SkeletonEntityModel || model instanceof HorseEntityModel ||
+				model instanceof LlamaEntityModel || model instanceof DrownedEntityModel || model instanceof IllagerEntityModel) {
+			if (!ragdollsEnabled) {
+				while (blockifiedEntity.size() > RagdollMapper.countModelParts(entity, model)) {
+					blockifiedEntity.remove(blockifiedEntity.size() - 1);
+				}
 			}
 		}
 	}
