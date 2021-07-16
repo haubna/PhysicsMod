@@ -260,9 +260,6 @@ public class VanillaRagdollHook implements RagdollHook {
 			ragdoll.addConnection(rightLegOffset, lowerBodyOffset);
 			ragdoll.addConnection(lowerBodyOffset, bodyOffset);
 		} else if (model instanceof SpiderEntityModel) {
-			// TODO cave spider pivot points are wrong (strider babies as well)
-			// probably due to scaling, when fixed Ghast should also
-			// work since he has scale issues as well
 			int headOffset = 0;
 			int rightFrontLegOffset = 1;
 			int rightHindLegOffset = 2;
