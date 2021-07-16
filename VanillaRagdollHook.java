@@ -447,8 +447,6 @@ public class VanillaRagdollHook implements RagdollHook {
 			ragdoll.addConnection(leftWingTipOffset, leftWingOffset, true);
 			ragdoll.addConnection(leftWingOffset, bodyOffset);
 		} else if (model instanceof BeeEntityModel) {
-			// TODO some vertices in cuboid class are mirrored/flipped that I don't encount for yet
-			// that's why the bee wings are messed up
 			int frontLegsOffset = 0;
 			int rightWingOffset = 1;
 			int leftWingOffset = 2;
@@ -954,8 +952,6 @@ public class VanillaRagdollHook implements RagdollHook {
 			ragdoll.addConnection(tailOffset, bodyOffset, true, true);
 			ragdoll.addConnection(rightFinOffset, bodyOffset, true, true);
 			
-			// overlay rendering not supported with ragdolls right now
-			// since fixed joints can't use different textures
 			ragdoll.addOverlayConnections(true);
 		} else if (model instanceof SmallTropicalFishEntityModel) {
 			int leftFinOffset = 0;
@@ -969,8 +965,6 @@ public class VanillaRagdollHook implements RagdollHook {
 			ragdoll.addConnection(tailOffset, bodyOffset, true, true);
 			ragdoll.addConnection(rightFinOffset, bodyOffset, true, true);
 
-			// overlay rendering not supported with ragdolls right now
-			// since fixed joints can't use different textures
 			ragdoll.addOverlayConnections(true);
 		} else if (entity instanceof EnderDragonEntity) {
 			// ender dragon model is null because ender dragon has no living entity renderer and thus
