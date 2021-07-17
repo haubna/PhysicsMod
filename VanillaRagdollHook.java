@@ -18,6 +18,7 @@ import net.minecraft.client.render.entity.model.CreeperEntityModel;
 import net.minecraft.client.render.entity.model.DolphinEntityModel;
 import net.minecraft.client.render.entity.model.DonkeyEntityModel;
 import net.minecraft.client.render.entity.model.DrownedEntityModel;
+import net.minecraft.client.render.entity.model.EndermanEntityModel;
 import net.minecraft.client.render.entity.model.EndermiteEntityModel;
 import net.minecraft.client.render.entity.model.EntityModel;
 import net.minecraft.client.render.entity.model.FoxEntityModel;
@@ -82,27 +83,50 @@ public class VanillaRagdollHook implements RagdollHook {
 			int leftArmOffset = RagdollMapper.getCuboids(ragdoll, body.next(), counter);
 			int rightLegOffset = RagdollMapper.getCuboids(ragdoll, body.next(), counter);
 			int leftLegOffset = RagdollMapper.getCuboids(ragdoll, body.next(), counter);
-			int hatOffset = RagdollMapper.getCuboids(ragdoll, body.next(), counter);
 			
 			ragdoll.addConnection(headOffset, bodyOffset);
 			ragdoll.addConnection(rightArmOffset, bodyOffset);
 			ragdoll.addConnection(leftArmOffset, bodyOffset);
 			ragdoll.addConnection(rightLegOffset, bodyOffset);
 			ragdoll.addConnection(leftLegOffset, bodyOffset);
-			ragdoll.addConnection(hatOffset, headOffset, true);
+
+			int hatOffset = RagdollMapper.getCuboids(ragdoll, body.next(), counter);
+			
+			if (((BipedEntityModel) model).hat.visible) {
+				ragdoll.addConnection(hatOffset, headOffset, true);
+			}
 			
 			if (model instanceof PlayerEntityModel) {
+				PlayerEntityModel playerModel = (PlayerEntityModel) model;
+				
+				RagdollMapper.printModelParts(model);
+				
 				try {
 					int leftPantsOffset = RagdollMapper.getCuboids(ragdoll, body.next(), counter);
 					int rightPantsOffset = RagdollMapper.getCuboids(ragdoll, body.next(), counter);
 					int leftSleeveOffset = RagdollMapper.getCuboids(ragdoll, body.next(), counter);
 					int rightSleeveOffset = RagdollMapper.getCuboids(ragdoll, body.next(), counter);
 					int jacketOffset = RagdollMapper.getCuboids(ragdoll, body.next(), counter);
-					ragdoll.addConnection(leftPantsOffset, leftLegOffset, true);
-					ragdoll.addConnection(rightPantsOffset, rightLegOffset, true);
-					ragdoll.addConnection(leftSleeveOffset, leftArmOffset, true);
-					ragdoll.addConnection(rightSleeveOffset, rightArmOffset, true);
-					ragdoll.addConnection(jacketOffset, bodyOffset, true);
+					
+					if (playerModel.leftPants.visible) {
+						ragdoll.addConnection(leftPantsOffset, leftLegOffset, true);
+					}
+
+					if (playerModel.rightPants.visible) {
+						ragdoll.addConnection(rightPantsOffset, rightLegOffset, true);
+					}
+
+					if (playerModel.leftSleeve.visible) {
+						ragdoll.addConnection(leftSleeveOffset, leftArmOffset, true);
+					}
+
+					if (playerModel.rightSleeve.visible) {
+						ragdoll.addConnection(rightSleeveOffset, rightArmOffset, true);
+					}
+
+					if (playerModel.jacket.visible) {
+						ragdoll.addConnection(jacketOffset, bodyOffset, true);
+					}
 				} catch (Exception e) {}
 			} else if (model instanceof ArmorStandEntityModel) {
 				try {
@@ -140,6 +164,8 @@ public class VanillaRagdollHook implements RagdollHook {
 					if (count < ragdoll.bodies.size())
 						ragdoll.addOverlayConnections(true);
 				}
+			} else if (model instanceof EndermanEntityModel) {
+				ragdoll.addOverlayConnections(true);
 			}
 			
 			while (body.hasNext()) {
@@ -1246,7 +1272,8 @@ public class VanillaRagdollHook implements RagdollHook {
 				blockifiedEntity.remove(blockifiedEntity.size() - 1);
 			}
 		} else if (model instanceof LargeTropicalFishEntityModel || model instanceof SmallTropicalFishEntityModel || model instanceof SkeletonEntityModel || model instanceof HorseEntityModel ||
-				model instanceof LlamaEntityModel || model instanceof DrownedEntityModel || model instanceof IllagerEntityModel || model instanceof VillagerResemblingModel) {
+				model instanceof LlamaEntityModel || model instanceof DrownedEntityModel || model instanceof IllagerEntityModel || model instanceof VillagerResemblingModel || 
+				model instanceof EndermanEntityModel) {
 			int count = RagdollMapper.countModelParts(entity, model);
 			
 			if (!ragdollsEnabled) {
