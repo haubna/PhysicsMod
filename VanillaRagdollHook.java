@@ -35,6 +35,7 @@ import net.minecraft.client.render.entity.model.MediumPufferfishEntityModel;
 import net.minecraft.client.render.entity.model.OcelotEntityModel;
 import net.minecraft.client.render.entity.model.ParrotEntityModel;
 import net.minecraft.client.render.entity.model.PhantomEntityModel;
+import net.minecraft.client.render.entity.model.PiglinEntityModel;
 import net.minecraft.client.render.entity.model.PlayerEntityModel;
 import net.minecraft.client.render.entity.model.QuadrupedEntityModel;
 import net.minecraft.client.render.entity.model.RabbitEntityModel;
@@ -51,7 +52,10 @@ import net.minecraft.client.render.entity.model.SpiderEntityModel;
 import net.minecraft.client.render.entity.model.SquidEntityModel;
 import net.minecraft.client.render.entity.model.StriderEntityModel;
 import net.minecraft.client.render.entity.model.VillagerResemblingModel;
+import net.minecraft.client.render.entity.model.WitchEntityModel;
 import net.minecraft.client.render.entity.model.WitherEntityModel;
+import net.minecraft.client.render.entity.model.WolfEntityModel;
+import net.minecraft.client.render.entity.model.ZombieEntityModel;
 import net.minecraft.client.render.entity.model.ZombieVillagerEntityModel;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.boss.dragon.EnderDragonEntity;
@@ -110,10 +114,32 @@ public class VanillaRagdollHook implements RagdollHook {
 					ragdoll.addConnection(leftBodyStickOffset, bodyOffset, true);
 					ragdoll.addConnection(shoulderStickOffset, bodyOffset, true);
 				} catch (Exception e) {}
-			} else if (model instanceof SkeletonEntityModel || model instanceof DrownedEntityModel) {
+			} else if (model instanceof SkeletonEntityModel) {
 				// this adds support for strays
 				if (RagdollMapper.countModelParts(entity, model) < ragdoll.bodies.size())
 					ragdoll.addOverlayConnections(true);
+			} else if (model instanceof DrownedEntityModel) {
+				int count = RagdollMapper.countModelParts(entity, model);
+
+				if (ragdoll.bodies.size() > count * 2) {
+					// with trident there gets something rendered before the overlay
+					// so offset the indices by 1
+					ragdoll.addOverlayConnections(true, 14, 5);
+					
+					// trident ragdoll
+					int base = 7;
+					int spike1 = 8;
+					int spike2 = 9;
+					int spike3 = 10;
+					int base2 = 11;
+					ragdoll.addConnection(base2, base, true);
+					ragdoll.addConnection(spike1, base, true);
+					ragdoll.addConnection(spike2, base, true);
+					ragdoll.addConnection(spike3, base, true);
+				} else {
+					if (count < ragdoll.bodies.size())
+						ragdoll.addOverlayConnections(true);
+				}
 			}
 			
 			while (body.hasNext()) {
@@ -187,6 +213,39 @@ public class VanillaRagdollHook implements RagdollHook {
 			while (body.hasNext()) {
 				RagdollMapper.getCuboids(ragdoll, body.next(), counter);
 			}
+		} else if (model instanceof WolfEntityModel) { 
+			AnimalModel animal = (AnimalModel) model;
+			Iterator<ModelPart> head = animal.getHeadParts().iterator();
+			Counter counter = new Counter();
+			
+			int headOffset = 0;
+			
+			while (head.hasNext()) {
+				RagdollMapper.getCuboids(ragdoll, head.next(), counter);
+			}
+
+			Iterator<ModelPart> body = animal.getBodyParts().iterator();
+			int bodyOffset = counter.count;
+			int rightFrontLegOffset = RagdollMapper.getCuboids(ragdoll, body.next(), counter);
+			int leftFrontLegOffset = RagdollMapper.getCuboids(ragdoll, body.next(), counter);
+			int rightHindLegOffset = RagdollMapper.getCuboids(ragdoll, body.next(), counter);
+			int leftHindLegOffset = RagdollMapper.getCuboids(ragdoll, body.next(), counter);
+			int tailOffset = RagdollMapper.getCuboids(ragdoll, body.next(), counter);
+			int neckOffset = RagdollMapper.getCuboids(ragdoll, body.next(), counter);
+			
+			ragdoll.addConnection(headOffset, neckOffset);
+			ragdoll.addConnection(rightFrontLegOffset, bodyOffset);
+			ragdoll.addConnection(leftFrontLegOffset, bodyOffset);
+			ragdoll.addConnection(leftHindLegOffset, bodyOffset);
+			ragdoll.addConnection(rightHindLegOffset, bodyOffset);
+			ragdoll.addConnection(tailOffset, bodyOffset);
+			ragdoll.addConnection(neckOffset, bodyOffset);
+			
+			while (body.hasNext()) {
+				RagdollMapper.getCuboids(ragdoll, body.next(), counter);
+			}
+			
+			RagdollMapper.printModelParts(model);
 		} else if (model instanceof SquidEntityModel) {
 			ragdoll.addConnection(0, 4);
 			ragdoll.addConnection(1, 4);
@@ -340,6 +399,50 @@ public class VanillaRagdollHook implements RagdollHook {
 			ragdoll.addConnection(headOffset + 3, headOffset, true);
 			ragdoll.addConnection(headOffset + 4, headOffset, true);
 			ragdoll.addConnection(eye, headOffset, true);
+		} else if (model instanceof WitchEntityModel) {
+//			[12:14:20] [Render thread/INFO] (Minecraft) [STDOUT]: head: 0
+//			[12:14:20] [Render thread/INFO] (Minecraft) [STDOUT]: nose: 1
+//			[12:14:20] [Render thread/INFO] (Minecraft) [STDOUT]: mole: 2
+//			[12:14:20] [Render thread/INFO] (Minecraft) [STDOUT]: hat: 3
+//			[12:14:20] [Render thread/INFO] (Minecraft) [STDOUT]: hat_rim: 4
+//			[12:14:20] [Render thread/INFO] (Minecraft) [STDOUT]: hat2: 5
+//			[12:14:20] [Render thread/INFO] (Minecraft) [STDOUT]: hat3: 6
+//			[12:14:20] [Render thread/INFO] (Minecraft) [STDOUT]: hat4: 7
+//			[12:14:20] [Render thread/INFO] (Minecraft) [STDOUT]: left_leg: 8
+//			[12:14:20] [Render thread/INFO] (Minecraft) [STDOUT]: right_leg: 9
+//			[12:14:20] [Render thread/INFO] (Minecraft) [STDOUT]: arms: 10
+//			[12:14:20] [Render thread/INFO] (Minecraft) [STDOUT]: body: 13
+//			[12:14:20] [Render thread/INFO] (Minecraft) [STDOUT]: jacket: 14
+//			[12:14:20] [Render thread/INFO] (Minecraft) [STDOUT]: class net.minecraft.client.render.entity.model.WitchEntityModel
+			int headOffset = 0;
+			int noseOffset = 1;
+			int moleOffset = 2;
+			int hatOffset = 3;
+			int hatRimOffset = 4;
+			int hat2Offset = 5;
+			int hat3Offset = 6;
+			int hat4Offset = 7;
+			int leftLegOffset = 8;
+			int rightLegOffset = 9;
+			int armsOffset = 10;
+			int bodyOffset = 13;
+			int jacketOffset = 14;
+
+			ragdoll.addConnection(moleOffset, headOffset, true);
+			ragdoll.addConnection(hat2Offset, headOffset, true);
+			ragdoll.addConnection(hat3Offset, headOffset, true);
+			ragdoll.addConnection(hat4Offset, headOffset, true);
+			ragdoll.addConnection(hatOffset, headOffset, true);
+			ragdoll.addConnection(hatRimOffset, headOffset, true);
+			ragdoll.addConnection(noseOffset, headOffset, true);
+			ragdoll.addConnection(headOffset, bodyOffset);
+			ragdoll.addConnection(jacketOffset, bodyOffset, true);
+			ragdoll.addConnection(armsOffset, bodyOffset, true);
+			ragdoll.addConnection(armsOffset + 1, bodyOffset, true);
+			ragdoll.addConnection(armsOffset + 2, bodyOffset, true);
+			ragdoll.addConnection(rightLegOffset, bodyOffset);
+			ragdoll.addConnection(leftLegOffset, bodyOffset);
+			ragdoll.addConnection(armsOffset, bodyOffset);
 		} else if (model instanceof VillagerResemblingModel) {
 			int headOffset = 0;
 			int noseOffset = 1;
@@ -355,7 +458,7 @@ public class VanillaRagdollHook implements RagdollHook {
 			ragdoll.addConnection(hatRimOffset, headOffset, true);
 			ragdoll.addConnection(noseOffset, headOffset, true);
 			ragdoll.addConnection(headOffset, bodyOffset);
-			ragdoll.addConnection(jacketOffset, bodyOffset);
+			ragdoll.addConnection(jacketOffset, bodyOffset, true);
 			ragdoll.addConnection(armsOffset, bodyOffset, true);
 			ragdoll.addConnection(armsOffset + 1, bodyOffset, true);
 			ragdoll.addConnection(armsOffset + 2, bodyOffset, true);
@@ -363,9 +466,48 @@ public class VanillaRagdollHook implements RagdollHook {
 			ragdoll.addConnection(leftLegOffset, bodyOffset);
 			ragdoll.addConnection(armsOffset, bodyOffset);
 			
-			// clothing not yet supported for villagers
-//			if (RagdollMapper.countModelParts(entity, model) < ragdoll.bodies.size())
-//				ragdoll.addOverlayConnections(true);
+			RagdollMapper.printModelParts(model);
+			
+			int count = RagdollMapper.countModelParts(entity, model);
+			
+			if (count < ragdoll.bodies.size()) {
+				// offsets for invisible head and hat
+				int nleftLegOffset = 0;
+				int nrightLegOffset = 1;
+				int narmsOffset = 2;
+				int nbodyOffset = 5;
+				int njacketOffset = 6;
+				int overlays = (int) Math.ceil(ragdoll.bodies.size() / (double) count);
+
+				boolean hasHat = ragdoll.bodies.size() % count != 0;
+				
+				for (int i = 1; i < overlays; i++) {
+					int offset = count * i + ((i != 1) ? (hasHat ? -4 : 0) : 0);
+					
+					if (i == 1 && hasHat) {
+						ragdoll.addConnection(nbodyOffset + offset, bodyOffset, true, true);
+						ragdoll.addConnection(njacketOffset + offset, bodyOffset, true, true);
+						ragdoll.addConnection(narmsOffset + offset, bodyOffset, true, true);
+						ragdoll.addConnection(narmsOffset + 1 + offset, bodyOffset, true, true);
+						ragdoll.addConnection(narmsOffset + 2 + offset, bodyOffset, true, true);
+						ragdoll.addConnection(nrightLegOffset + offset, rightLegOffset, true, true);
+						ragdoll.addConnection(nleftLegOffset + offset, leftLegOffset, true, true);
+					} else {
+						ragdoll.addConnection(hatOffset + offset, headOffset, true, true);
+						ragdoll.addConnection(hatRimOffset + offset, headOffset, true, true);
+						ragdoll.addConnection(noseOffset + offset, headOffset, true, true);
+						ragdoll.addConnection(headOffset + offset, headOffset, true, true);
+						
+						ragdoll.addConnection(bodyOffset + offset, bodyOffset, true, true);
+						ragdoll.addConnection(jacketOffset + offset, bodyOffset, true, true);
+						ragdoll.addConnection(armsOffset + offset, bodyOffset, true, true);
+						ragdoll.addConnection(armsOffset + 1 + offset, bodyOffset, true, true);
+						ragdoll.addConnection(armsOffset + 2 + offset, bodyOffset, true, true);
+						ragdoll.addConnection(rightLegOffset + offset, rightLegOffset, true, true);
+						ragdoll.addConnection(leftLegOffset + offset, leftLegOffset, true, true);
+					}
+				}
+			}
 		} else if (model instanceof IllagerEntityModel) {
 			int headOffset = 0;
 			int noseOffset = 1;
@@ -1103,16 +1245,20 @@ public class VanillaRagdollHook implements RagdollHook {
 			while (blockifiedEntity.size() > 31 + 17 * 2) {
 				blockifiedEntity.remove(blockifiedEntity.size() - 1);
 			}
-		} else if (model instanceof PhantomEntityModel || model instanceof VillagerResemblingModel) {
-			while (blockifiedEntity.size() > RagdollMapper.countModelParts(entity, model)) {
-				blockifiedEntity.remove(blockifiedEntity.size() - 1);
-			}
 		} else if (model instanceof LargeTropicalFishEntityModel || model instanceof SmallTropicalFishEntityModel || model instanceof SkeletonEntityModel || model instanceof HorseEntityModel ||
-				model instanceof LlamaEntityModel || model instanceof DrownedEntityModel || model instanceof IllagerEntityModel) {
+				model instanceof LlamaEntityModel || model instanceof DrownedEntityModel || model instanceof IllagerEntityModel || model instanceof VillagerResemblingModel) {
+			int count = RagdollMapper.countModelParts(entity, model);
+			
 			if (!ragdollsEnabled) {
-				while (blockifiedEntity.size() > RagdollMapper.countModelParts(entity, model)) {
+				while (blockifiedEntity.size() > count) {
 					blockifiedEntity.remove(blockifiedEntity.size() - 1);
 				}
+			}
+		} else if (model instanceof PhantomEntityModel || model instanceof ZombieEntityModel || model instanceof PiglinEntityModel) {
+			int count = RagdollMapper.countModelParts(entity, model);
+			
+			while (blockifiedEntity.size() > count) {
+				blockifiedEntity.remove(blockifiedEntity.size() - 1);
 			}
 		}
 	}
