@@ -6,6 +6,16 @@ import java.util.List;
 import net.diebuddies.physics.PhysicsEntity;
 import net.diebuddies.physics.ragdoll.RagdollMapper.Counter;
 import net.minecraft.client.model.ModelPart;
+import net.minecraft.client.render.entity.feature.ArmorFeatureRenderer;
+import net.minecraft.client.render.entity.feature.CapeFeatureRenderer;
+import net.minecraft.client.render.entity.feature.Deadmau5FeatureRenderer;
+import net.minecraft.client.render.entity.feature.ElytraFeatureRenderer;
+import net.minecraft.client.render.entity.feature.HeadFeatureRenderer;
+import net.minecraft.client.render.entity.feature.HeldItemFeatureRenderer;
+import net.minecraft.client.render.entity.feature.ShoulderParrotFeatureRenderer;
+import net.minecraft.client.render.entity.feature.StuckArrowsFeatureRenderer;
+import net.minecraft.client.render.entity.feature.StuckStingersFeatureRenderer;
+import net.minecraft.client.render.entity.feature.TridentRiptideFeatureRenderer;
 import net.minecraft.client.render.entity.model.AnimalModel;
 import net.minecraft.client.render.entity.model.ArmorStandEntityModel;
 import net.minecraft.client.render.entity.model.AxolotlEntityModel;
@@ -513,11 +523,14 @@ public class VanillaRagdollHook implements RagdollHook {
 			int upperBodyOffset = 2;
 			int leftArmOffset = 3;
 			int lowerBodyOffset = 4;
+			int pumpkinOffset = 5;
 
 			ragdoll.addConnection(headOffset, upperBodyOffset);
 			ragdoll.addConnection(rightArmOffset, upperBodyOffset);
 			ragdoll.addConnection(leftArmOffset, upperBodyOffset);
-			ragdoll.addConnection(lowerBodyOffset, upperBodyOffset);
+			ragdoll.addConnection(upperBodyOffset, lowerBodyOffset);
+			
+			if (ragdoll.bodies.size() == 6) ragdoll.addConnection(pumpkinOffset, headOffset, true);
 		} else if (model instanceof GuardianEntityModel) {
 			int headOffset = 0;
 			int spike0 = 21;
@@ -1422,6 +1435,10 @@ public class VanillaRagdollHook implements RagdollHook {
 		// like the dots on horses
 		boolean ragdollsEnabled = RagdollMapper.areRagdollsEnabled(entity);
 		
+		if (model instanceof SnowGolemEntityModel) {
+			System.out.println("blocks: " + blockifiedEntity.size());
+		}
+		
 		if (model instanceof IronGolemEntityModel) {
 			while (blockifiedEntity.size() > 8) {
 				blockifiedEntity.remove(blockifiedEntity.size() - 1);
@@ -1442,10 +1459,6 @@ public class VanillaRagdollHook implements RagdollHook {
 			while (blockifiedEntity.size() > 6) {
 				blockifiedEntity.remove(blockifiedEntity.size() - 1);
 			}
-//		} else if (model instanceof ZombieVillagerEntityModel) {
-//			while (blockifiedEntity.size() > 10) {
-//				blockifiedEntity.remove(blockifiedEntity.size() - 1);
-//			}
 		} else if (entity instanceof EnderDragonEntity) {
 			// 31 for all the model parts and the neck and tail get rendered additionally (17 * 2)
 			while (blockifiedEntity.size() > 31 + 17 * 2) {
@@ -1466,6 +1479,22 @@ public class VanillaRagdollHook implements RagdollHook {
 			
 			while (blockifiedEntity.size() > count) {
 				blockifiedEntity.remove(blockifiedEntity.size() - 1);
+			}
+		}
+		
+		// remove unnecessary features
+		Iterator<PhysicsEntity> it = blockifiedEntity.iterator();
+		
+		while (it.hasNext()) {
+			PhysicsEntity physicsEntity = it.next();
+			
+			if (physicsEntity.feature instanceof ArmorFeatureRenderer || physicsEntity.feature instanceof HeadFeatureRenderer || 
+					physicsEntity.feature instanceof ElytraFeatureRenderer || physicsEntity.feature instanceof HeldItemFeatureRenderer || 
+					physicsEntity.feature instanceof StuckArrowsFeatureRenderer || physicsEntity.feature instanceof Deadmau5FeatureRenderer || 
+					physicsEntity.feature instanceof CapeFeatureRenderer || physicsEntity.feature instanceof TridentRiptideFeatureRenderer || 
+					physicsEntity.feature instanceof ShoulderParrotFeatureRenderer || physicsEntity.feature instanceof StuckStingersFeatureRenderer || 
+					physicsEntity.feature instanceof ElytraFeatureRenderer) {
+				it.remove();
 			}
 		}
 	}
