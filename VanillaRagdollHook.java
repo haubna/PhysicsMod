@@ -1435,10 +1435,6 @@ public class VanillaRagdollHook implements RagdollHook {
 		// like the dots on horses
 		boolean ragdollsEnabled = RagdollMapper.areRagdollsEnabled(entity);
 		
-		if (model instanceof SnowGolemEntityModel) {
-			System.out.println("blocks: " + blockifiedEntity.size());
-		}
-		
 		if (model instanceof IronGolemEntityModel) {
 			while (blockifiedEntity.size() > 8) {
 				blockifiedEntity.remove(blockifiedEntity.size() - 1);
