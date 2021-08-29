@@ -12,4 +12,4 @@ You will need to create a __RagdollHook__ and add it via __RagdollMapper.addHook
 
 Thanks to fabmax for creating a PhysX JNI Wrapper: https://github.com/fabmax/physx-jni
 
-Mod page: https://www.curseforge.com/minecraft/mc-mods/physics-mod
+Mod page: https://minecraftphysicsmod.com
