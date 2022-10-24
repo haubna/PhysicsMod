@@ -11,6 +11,7 @@ import net.minecraft.client.model.ArmorStandModel;
 import net.minecraft.client.model.AxolotlModel;
 import net.minecraft.client.model.BatModel;
 import net.minecraft.client.model.BeeModel;
+import net.minecraft.client.model.CamelModel;
 import net.minecraft.client.model.ChestedHorseModel;
 import net.minecraft.client.model.ChickenModel;
 import net.minecraft.client.model.CodModel;
@@ -1134,6 +1135,80 @@ public class VanillaRagdollHook implements RagdollHook {
 			ragdoll.addConnection(earRightOffset, neckOffset, true);
 			
 			ragdoll.addConnection(neckOffset, bodyOffset);
+			ragdoll.addConnection(rightFrontLegOffset, bodyOffset);
+			ragdoll.addConnection(rightHindLegOffset, bodyOffset);
+			ragdoll.addConnection(leftHindLegOffset, bodyOffset);
+			ragdoll.addConnection(leftFrontLegOffset, bodyOffset);
+			
+			if (RagdollMapper.countModelParts(entity, model) < ragdoll.bodies.size())
+				ragdoll.addOverlayConnections(true);
+		} else if (model instanceof CamelModel) {
+			RagdollMapper.printModelParts(model);
+
+		    String SADDLE = "saddle";
+		    String BRIDLE = "bridle";
+		    String REINS = "reins";
+			ModelPart root = ((CamelModel) model).root();
+	        ModelPart body = root.getChild("body");
+	        ModelPart head = body.getChild("head");
+	        
+	        boolean saddle = body.getChild(SADDLE).visible;
+	        boolean reins = head.getChild(REINS).visible;
+			
+			int rightFrontLegOffset = 0;
+			int rightHindLegOffset = 1;
+			int leftHindLegOffset = 2;
+			int bodyOffset = 3;
+			int headOffset = 4;
+			int neck1Offset = 5;
+			int neck2Offset = 6;
+			int earRightOffset = 7;
+			int earLeftOffset = 8;
+			int humpOffset = 9;
+			int tailOffset = 10;
+			int leftFrontLegOffset = 11;
+			
+			if (saddle) {
+				// we don't attach the reins in the end
+				// because when the camel is dead it should no longer
+				// have reins attached to it
+				int reinOffset = reins ? 3 : 0;
+
+				earRightOffset = 12;
+				earLeftOffset = 13 + reinOffset;
+				humpOffset = 14 + reinOffset;
+				tailOffset = 18 + reinOffset;
+				leftFrontLegOffset = 19 + reinOffset;
+				
+				int saddleHump1Offset = 15 + reinOffset;
+				int saddleHump2Offset = 16 + reinOffset;
+				int saddleBodyOffset = 17 + reinOffset;
+				
+				int bridle1Offset = 7;
+				int bridle2Offset = 8;
+				int bridle3Offset = 9;
+				int bridle4Offset = 10;
+				int bridle5Offset = 11;
+				
+				ragdoll.addConnection(bridle1Offset, neck2Offset, true);
+				ragdoll.addConnection(bridle2Offset, neck2Offset, true);
+				ragdoll.addConnection(bridle3Offset, neck2Offset, true);
+				ragdoll.addConnection(bridle4Offset, neck2Offset, true);
+				ragdoll.addConnection(bridle5Offset, neck2Offset, true);
+
+				ragdoll.addConnection(saddleHump1Offset, bodyOffset, true);
+				ragdoll.addConnection(saddleHump2Offset, bodyOffset, true);
+				ragdoll.addConnection(saddleBodyOffset, bodyOffset, true);
+			}
+			
+			ragdoll.addConnection(headOffset, neck2Offset, true);
+			ragdoll.addConnection(earLeftOffset, neck2Offset, true);
+			ragdoll.addConnection(earRightOffset, neck2Offset, true);
+			ragdoll.addConnection(neck1Offset, neck2Offset, true);
+			
+			ragdoll.addConnection(humpOffset, bodyOffset, true);
+			ragdoll.addConnection(tailOffset, bodyOffset, true);
+			ragdoll.addConnection(neck2Offset, bodyOffset);
 			ragdoll.addConnection(rightFrontLegOffset, bodyOffset);
 			ragdoll.addConnection(rightHindLegOffset, bodyOffset);
 			ragdoll.addConnection(leftHindLegOffset, bodyOffset);
