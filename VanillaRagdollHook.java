@@ -1143,10 +1143,7 @@ public class VanillaRagdollHook implements RagdollHook {
 			if (RagdollMapper.countModelParts(entity, model) < ragdoll.bodies.size())
 				ragdoll.addOverlayConnections(true);
 		} else if (model instanceof CamelModel) {
-			RagdollMapper.printModelParts(model);
-
 		    String SADDLE = "saddle";
-		    String BRIDLE = "bridle";
 		    String REINS = "reins";
 			ModelPart root = ((CamelModel) model).root();
 	        ModelPart body = root.getChild("body");
