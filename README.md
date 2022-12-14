@@ -1,5 +1,5 @@
 # Physics Mod
-Feel free to report any bugs here. Please only report bugs on the newest version of the mod. Legacy versions of Minecraft will not get updates. I only work on this mod from time to time so don't expect immediate bug fixes! Thanks :)
+Feel free to report any bugs here. Please only report bugs on the newest version of the mod. Legacy versions of Minecraft will not get updates.
 
 # Shaders
 Snow uses the entity ID (rendered with the entities shader) 829925.
