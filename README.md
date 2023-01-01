@@ -4,7 +4,7 @@ Feel free to report any bugs here. Please only report bugs on the newest version
 # Shaders
 
 ## Ocean
-Please follow the instructions in the oceans.glsl file
+Please follow the instructions in the oceans.glsl file if you want custom ocean shader support for your shaderpack.
 
 ## Snow
 Snow uses the entity ID (rendered with the entities shader) 829925.
