@@ -7,7 +7,7 @@ Feel free to report any bugs here. Please only report bugs on the newest version
 Please follow the instructions in the oceans.glsl file if you want custom ocean shader support for your shaderpack.
 
 ## Snow
-Snow uses the entity ID (rendered with the entities shader) 829925.
+Snow uses the entity ID (rendered with the entities shader) 829925 (uniform int entityId;).
 
 # Ragdoll API (Physics Mod 2.2.3 and above)
 You can use it to add ragdoll physics to your mod entities. To make the physics work with your mod __USE__ the __ModelPart__ class for your custom entities and not create your own one, since I hook into this class.
