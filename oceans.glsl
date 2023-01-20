@@ -1,9 +1,8 @@
 // THIS FILE IS PUBLIC DOMAIN SO USE IT HOWEVER YOU WANT!
 // to make it compatible with your shaderpack use:
 #define PHYSICS_OCEAN_SUPPORT
-// at the top of your file (can be used in gbuffers_water and shadows). 
-// When used my mod no longer injects code into your shaderpack. 
-// It replaces this define statement (before compilation) with
+// at the top of your file. When used my mod no longer injects code into
+// your shaderpack. It replaces this define statement (before compilation) with
 #define PHYSICS_OCEAN
 // so you can use
 #ifdef PHYSICS_OCEAN
@@ -32,6 +31,8 @@ uniform int physics_iterationsNormal;
 // used to offset the 0 point of wave meshes to keep the wave function consistent even
 // though the mesh totally changes
 uniform vec2 physics_waveOffset;
+// used for offsetting the local position to fetch the right pixel of the waviness texture
+uniform ivec2 physics_textureOffset;
 // time in seconds that can go faster dependent on weather conditions (affected by weather strength
 // multiplier in ocean settings
 uniform float physics_gameTime;
@@ -44,12 +45,14 @@ uniform float physics_oceanWaveHorizontalScale;
 
 // for the vertex shader stage
 out vec3 physics_localPosition;
+out float physics_localWaviness;
 // for the fragment shader stage
 in vec3 physics_localPosition;
+in float physics_localWaviness;
 
 float physics_waveHeight(vec2 position, int iterations, float factor, float time) {
     position = (position - physics_waveOffset) * PHYSICS_XZ_SCALE * physics_oceanWaveHorizontalScale;
-    float iter = 0.0;
+	float iter = 0.0;
     float frequency = PHYSICS_FREQUENCY;
     float speed = PHYSICS_SPEED;
     float weight = 1.0;
@@ -78,7 +81,7 @@ float physics_waveHeight(vec2 position, int iterations, float factor, float time
 
 vec2 physics_waveDirection(vec2 position, int iterations, float time) {
     position = (position - physics_waveOffset) * PHYSICS_XZ_SCALE * physics_oceanWaveHorizontalScale;
-	  float iter = 0.0;
+	float iter = 0.0;
     float frequency = PHYSICS_FREQUENCY;
     float speed = PHYSICS_SPEED;
     float weight = 1.0;
@@ -114,11 +117,11 @@ vec3 physics_waveNormal(vec2 position, float factor, float time) {
 
 // VERTEX STAGE
 void main() {
-    // basic texture to determine how shallow/far away from the shore the water is
-    float waviness = textureLod(physics_waviness, gl_Vertex.xz / vec2(textureSize(physics_waviness, 0)), 0.0).r;
-    // transform gl_Vertex (since it is the raw mesh, i.e. not transformed yet)
-    vec4 finalPosition = vec4(gl_Vertex.x, gl_Vertex.y + physics_waveHeight(gl_Vertex.xz, PHYSICS_ITERATIONS_OFFSET, waviness, physics_gameTime), gl_Vertex.z, gl_Vertex.w);
-    // pass this to the fragment shader to fetch the texture there for per fragment normals
+	// basic texture to determine how shallow/far away from the shore the water is
+	physics_localWaviness = texelFetch(physics_waviness, ivec2(gl_Vertex.xz) - physics_textureOffset, 0).r;
+	// transform gl_Vertex (since it is the raw mesh, i.e. not transformed yet)
+	vec4 finalPosition = vec4(gl_Vertex.x, gl_Vertex.y + physics_waveHeight(gl_Vertex.xz, PHYSICS_ITERATIONS_OFFSET, physics_localWaviness, physics_gameTime), gl_Vertex.z, gl_Vertex.w);
+	// pass this to the fragment shader to fetch the texture there for per fragment normals
     physics_localPosition = finalPosition.xyz;
     
     // now use finalPosition instead of gl_Vertex
@@ -126,8 +129,6 @@ void main() {
 
 // FRAGMENT STAGE
 void main() {
-    // basic texture to determine how shallow/far away from the shore the water is
-    float waviness = textureLod(physics_waviness, physics_localPosition.xz / vec2(textureSize(physics_waviness, 0)), 0.0).r;
-    // normal is in world space
-    vec3 normal = physics_waveNormal(physics_localPosition.xz, waviness, physics_gameTime);
+	// normal is in world space
+    vec3 normal = physics_waveNormal(physics_localPosition.xz, physics_localWaviness, physics_gameTime);
 }
