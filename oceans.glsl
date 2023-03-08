@@ -42,6 +42,12 @@ uniform float physics_oceanHeight;
 uniform sampler2D physics_waviness;
 // basic scale for the horizontal size of the waves
 uniform float physics_oceanWaveHorizontalScale;
+// used to offset the model to know the ripple position
+uniform vec3 physics_modelOffset;
+// used for offsetting the ripple texture
+uniform float physics_rippleRange;
+// texture containing the ripples (basic bump map)
+uniform sampler2D physics_ripples;
 
 // for the vertex shader stage
 out vec3 physics_localPosition;
@@ -52,7 +58,7 @@ in float physics_localWaviness;
 
 float physics_waveHeight(vec2 position, int iterations, float factor, float time) {
     position = (position - physics_waveOffset) * PHYSICS_XZ_SCALE * physics_oceanWaveHorizontalScale;
-    float iter = 0.0;
+	float iter = 0.0;
     float frequency = PHYSICS_FREQUENCY;
     float speed = PHYSICS_SPEED;
     float weight = 1.0;
@@ -81,7 +87,7 @@ float physics_waveHeight(vec2 position, int iterations, float factor, float time
 
 vec2 physics_waveDirection(vec2 position, int iterations, float time) {
     position = (position - physics_waveOffset) * PHYSICS_XZ_SCALE * physics_oceanWaveHorizontalScale;
-    float iter = 0.0;
+	float iter = 0.0;
     float frequency = PHYSICS_FREQUENCY;
     float speed = PHYSICS_SPEED;
     float weight = 1.0;
@@ -112,16 +118,32 @@ vec3 physics_waveNormal(vec2 position, float factor, float time) {
     vec2 wave = -physics_waveDirection(position.xy, physics_iterationsNormal, time);
     float oceanHeightFactor = physics_oceanHeight / 13.0;
     float totalFactor = oceanHeightFactor * factor;
-    return normalize(vec3(wave.x * totalFactor, PHYSICS_NORMAL_STRENGTH, wave.y * totalFactor));
+    vec3 waveNormal = normalize(vec3(wave.x * totalFactor, PHYSICS_NORMAL_STRENGTH, wave.y * totalFactor));
+    
+	vec2 eyePosition = position + physics_modelOffset.xz;
+    vec2 rippleFetch = (eyePosition + vec2(physics_rippleRange)) / (physics_rippleRange * 2.0);
+    vec2 rippleTexelSize = vec2(2.0 / textureSize(physics_ripples, 0).x, 0.0);
+    float left = texture(physics_ripples, rippleFetch - rippleTexelSize.xy).r;
+    float right = texture(physics_ripples, rippleFetch + rippleTexelSize.xy).r;
+    float top = texture(physics_ripples, rippleFetch - rippleTexelSize.yx).r;
+    float bottom = texture(physics_ripples, rippleFetch + rippleTexelSize.yx).r;
+    float totalEffect = left + right + top + bottom;
+    
+    float normalx = left - right;
+    float normalz = top - bottom;
+    vec3 rippleNormal = normalize(vec3(normalx, 1.0, normalz));
+    waveNormal = normalize(mix(waveNormal, rippleNormal, pow(totalEffect, 0.5)));
+
+    return waveNormal;
 }
 
 // VERTEX STAGE
 void main() {
-    // basic texture to determine how shallow/far away from the shore the water is
-    physics_localWaviness = texelFetch(physics_waviness, ivec2(gl_Vertex.xz) - physics_textureOffset, 0).r;
-    // transform gl_Vertex (since it is the raw mesh, i.e. not transformed yet)
-    vec4 finalPosition = vec4(gl_Vertex.x, gl_Vertex.y + physics_waveHeight(gl_Vertex.xz, PHYSICS_ITERATIONS_OFFSET, physics_localWaviness, physics_gameTime), gl_Vertex.z, gl_Vertex.w);
-    // pass this to the fragment shader to fetch the texture there for per fragment normals
+	// basic texture to determine how shallow/far away from the shore the water is
+	physics_localWaviness = texelFetch(physics_waviness, ivec2(gl_Vertex.xz) - physics_textureOffset, 0).r;
+	// transform gl_Vertex (since it is the raw mesh, i.e. not transformed yet)
+	vec4 finalPosition = vec4(gl_Vertex.x, gl_Vertex.y + physics_waveHeight(gl_Vertex.xz, PHYSICS_ITERATIONS_OFFSET, physics_localWaviness, physics_gameTime), gl_Vertex.z, gl_Vertex.w);
+	// pass this to the fragment shader to fetch the texture there for per fragment normals
     physics_localPosition = finalPosition.xyz;
     
     // now use finalPosition instead of gl_Vertex
@@ -129,6 +151,6 @@ void main() {
 
 // FRAGMENT STAGE
 void main() {
-    // normal is in world space
+	// normal is in world space
     vec3 normal = physics_waveNormal(physics_localPosition.xz, physics_localWaviness, physics_gameTime);
 }
