@@ -1,14 +1,3 @@
-// THIS FILE IS PUBLIC DOMAIN SO USE IT HOWEVER YOU WANT!
-// to make it compatible with your shaderpack use:
-#define PHYSICS_OCEAN_SUPPORT
-// at the top of your file. When used my mod no longer injects code into
-// your shaderpack. It replaces this define statement (before compilation) with
-#define PHYSICS_OCEAN
-// so you can use
-#ifdef PHYSICS_OCEAN
-#endif
-// to customize the water for the physics ocean 
-
 // just some basic consts for the wave function based on afl_ext's shader https://www.shadertoy.com/view/Xdlczl
 // the overall shape must stay consistent because it is also computed on the CPU side
 // to offset entities (though a custom CPU integration of your shader is possible by
