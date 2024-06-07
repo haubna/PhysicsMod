@@ -4,7 +4,7 @@ Feel free to report any bugs here. Please only report bugs on the newest version
 # Shaders
 
 ## Ocean
-From Minecraft 1.21 and onward you can now create and place custom ocean shader files in your shaderpacks (only supported with Iris). Simply place **physics_ocean.vsh**/**physics_ocean.gsh**/**physics_ocean.fsh** (.gsh file not mandatory) shader files in the corresponding world folders in your shaderpack (you can also create custom shadow shader files with **physics_ocean_shadow**). Here is a simple comparison from a traditional water shader changed to an ocean shader (thanks Emin for letting me share it!): https://www.diffchecker.com/24hNvzCu/ (Complementary Reimagined r5.1.1)
+From Pro v170 and onward you can now create and place custom ocean shader files in your shaderpacks (only supported with Iris). Simply place **physics_ocean.vsh**/**physics_ocean.gsh**/**physics_ocean.fsh** (.gsh file not mandatory) shader files in the corresponding world folders in your shaderpack (you can also create custom shadow shader files with **physics_ocean_shadow**). Here is a simple comparison from a traditional water shader changed to an ocean shader (thanks Emin for letting me share it!): https://www.diffchecker.com/24hNvzCu/ (Complementary Reimagined r5.1.1)
 
 For more details about the code check out the oceans.glsl file on this page.
 
