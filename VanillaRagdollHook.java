@@ -89,6 +89,7 @@ import net.minecraft.world.entity.monster.Bogged;
 import net.minecraft.world.entity.monster.Evoker;
 import net.minecraft.world.entity.monster.Illusioner;
 import net.minecraft.world.entity.monster.Vindicator;
+import net.minecraft.world.item.ItemStack;
 
 public class VanillaRagdollHook implements RagdollHook {
 
@@ -968,7 +969,7 @@ public class VanillaRagdollHook implements RagdollHook {
 			
 			RagdollMapper.getCuboids(ragdoll, model.root(), new Counter());
 			
-			boolean hasSaddle = equineState.isSaddled;
+			boolean hasSaddle = equineState.saddle != ItemStack.EMPTY;
 			int neckOffset = indices.get("head_parts").index;
 			int bodyOffset = indices.get("body").index;
 			int rightHindLegOffset = indices.get("right_hind_leg").index;
@@ -1446,81 +1447,51 @@ public class VanillaRagdollHook implements RagdollHook {
 		} else if (entity instanceof EnderDragon) {
 			// ender dragon model is null because ender dragon has no living entity renderer and thus
 			// we have no access to it's model
-			for (int i = 0; i < 5; i++) {
+			Map<String, ModelPartIndex> indices = RagdollMapper.getModelPartIndices(model);
+
+			int head = indices.get("head").index;
+			
+			for (int i = 0; i < 4; i++) {
 				// do neck
-				ragdoll.addConnection(i * 2 + 1, i * 2, true);
-				
-				if (i != 0) ragdoll.addConnection((i - 1) * 2, i * 2);
+				ragdoll.addConnection(indices.get("neck" + Integer.toString(i + 1)).index, indices.get("neck" + Integer.toString(i)).index);
 			}
 			
-			int offset = 10;
-
-			int head0 = 0 + offset;
-			int head1 = 1 + offset;
-			int head2 = 2 + offset;
-			int head3 = 3 + offset;
-			int head4 = 4 + offset;
-			int head5 = 5 + offset;
-			int jaw = 6 + offset;
+			int jaw = indices.get("jaw").index;
+			int body = indices.get("body").index;
 			
-			ragdoll.addConnection(jaw, head0, true);
-			ragdoll.addConnection(head1, head0, true);
-			ragdoll.addConnection(head2, head0, true);
-			ragdoll.addConnection(head3, head0, true);
-			ragdoll.addConnection(head4, head0, true);
-			ragdoll.addConnection(head5, head0, true);
+			int leftWing = indices.get("left_wing").index;
+			int leftWingTip = indices.get("left_wing_tip").index;
+			int leftFrontLeg = indices.get("left_front_leg").index;
+			int leftFrontLegTip = indices.get("left_front_leg_tip").index;
+			int leftFrontFoot = indices.get("left_front_foot").index;
+			int leftHindLeg = indices.get("left_hind_leg").index;
+			int leftHindLegTip = indices.get("left_hind_leg_tip").index;
+			int leftHindFoot = indices.get("left_hind_foot").index;
 			
-			ragdoll.addConnection(head0, 8);
-
-			int body0 = 7 + offset;
-			int body1 = 8 + offset;
-			int body2 = 9 + offset;
-			int body3 = 10 + offset;
+			int rightWing = indices.get("right_wing").index;
+			int rightWingTip = indices.get("right_wing_tip").index;
+			int rightFrontLeg = indices.get("right_front_leg").index;
+			int rightFrontLegTip = indices.get("right_front_leg_tip").index;
+			int rightFrontFoot = indices.get("right_front_foot").index;
+			int rightHindLeg = indices.get("right_hind_leg").index;
+			int rightHindLegTip = indices.get("right_hind_leg_tip").index;
+			int rightHindFoot = indices.get("right_hind_foot").index;
 			
-			int leftWing = 11 + offset;
-			int leftWingTexture = 12 + offset;
-			int leftWingTip = 13 + offset;
-			int leftWingTipTexture = 14 + offset;
-			int leftFrontLeg = 15 + offset;
-			int leftFrontLegTip = 16 + offset;
-			int leftFrontFoot = 17 + offset;
-			int leftHindLeg = 18 + offset;
-			int leftHindLegTip = 19 + offset;
-			int leftHindFoot = 20 + offset;
+			ragdoll.addConnection(jaw, head, true);
+			ragdoll.addConnection(head, indices.get("neck4").index);
 			
-			int rightWing = 21 + offset;
-			int rightWingTexture = 22 + offset;
-			int rightWingTip = 23 + offset;
-			int rightWingTipTexture = 24 + offset;
-			int rightFrontLeg = 25 + offset;
-			int rightFrontLegTip = 26 + offset;
-			int rightFrontFoot = 27 + offset;
-			int rightHindLeg = 28 + offset;
-			int rightHindLegTip = 29 + offset;
-			int rightHindFoot = 30 + offset;
+			ragdoll.addConnection(indices.get("neck0").index, body);
 			
-			ragdoll.addConnection(0, body0);
-			
-			ragdoll.addConnection(body1, body0, true);
-			ragdoll.addConnection(body2, body0, true);
-			ragdoll.addConnection(body3, body0, true);
-			
-			ragdoll.addConnection(rightWing, body0);
-			ragdoll.addConnection(leftWing, body0);
+			ragdoll.addConnection(rightWing, body);
+			ragdoll.addConnection(leftWing, body);
 			
 			ragdoll.addConnection(rightWingTip, rightWing);
 			ragdoll.addConnection(leftWingTip, leftWing);
 			
-			ragdoll.addConnection(rightWingTexture, rightWing, true);
-			ragdoll.addConnection(leftWingTexture, leftWing, true);
-			
-			ragdoll.addConnection(rightWingTipTexture, rightWingTip, true);
-			ragdoll.addConnection(leftWingTipTexture, leftWingTip, true);
-			
-			ragdoll.addConnection(rightFrontLeg, body0);
-			ragdoll.addConnection(rightHindLeg, body0);
-			ragdoll.addConnection(leftFrontLeg, body0);
-			ragdoll.addConnection(leftHindLeg, body0);
+			ragdoll.addConnection(rightFrontLeg, body);
+			ragdoll.addConnection(rightHindLeg, body);
+			ragdoll.addConnection(leftFrontLeg, body);
+			ragdoll.addConnection(leftHindLeg, body);
 			
 			ragdoll.addConnection(rightFrontLegTip, rightFrontLeg);
 			ragdoll.addConnection(rightHindLegTip, rightHindLeg);
@@ -1532,16 +1503,13 @@ public class VanillaRagdollHook implements RagdollHook {
 			ragdoll.addConnection(leftFrontFoot, leftFrontLegTip);
 			ragdoll.addConnection(leftHindFoot, leftHindLegTip);
 			
-			offset = 41;
-
-			for (int i = 0; i < 12; i++) {
-				// do tail
-				ragdoll.addConnection(i * 2 + 1 + offset, i * 2 + offset, true);
-				
-				if (i != 0) ragdoll.addConnection((i - 1) * 2 + offset, i * 2 + offset);
+			for (int i = 0; i < 11; i++) {
+				ragdoll.addConnection(indices.get("tail" + Integer.toString(i + 1)).index, indices.get("tail" + Integer.toString(i)).index);
 			}
 			
-			ragdoll.addConnection(offset, body0);
+			ragdoll.addConnection(indices.get("tail0").index, body);
+			
+			RagdollMapper.getCuboids(ragdoll, model.root(), new Counter());
 		} else if (model instanceof SnifferModel) {
 			int rightFrontLegOffset = 0;
 			int rightHindLegOffset = 1;
