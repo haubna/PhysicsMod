@@ -19,6 +19,7 @@ import net.minecraft.client.model.BoggedModel;
 import net.minecraft.client.model.CamelModel;
 import net.minecraft.client.model.ChickenModel;
 import net.minecraft.client.model.CodModel;
+import net.minecraft.client.model.CopperGolemModel;
 import net.minecraft.client.model.CreakingModel;
 import net.minecraft.client.model.CreeperModel;
 import net.minecraft.client.model.DolphinModel;
@@ -26,18 +27,19 @@ import net.minecraft.client.model.DrownedModel;
 import net.minecraft.client.model.EndermanModel;
 import net.minecraft.client.model.EndermiteModel;
 import net.minecraft.client.model.EntityModel;
+import net.minecraft.client.model.FelineModel;
 import net.minecraft.client.model.FoxModel;
 import net.minecraft.client.model.FrogModel;
 import net.minecraft.client.model.GhastModel;
 import net.minecraft.client.model.GoatModel;
 import net.minecraft.client.model.GuardianModel;
+import net.minecraft.client.model.HappyGhastModel;
 import net.minecraft.client.model.HoglinModel;
 import net.minecraft.client.model.HorseModel;
 import net.minecraft.client.model.HumanoidModel;
 import net.minecraft.client.model.IllagerModel;
 import net.minecraft.client.model.IronGolemModel;
 import net.minecraft.client.model.LlamaModel;
-import net.minecraft.client.model.OcelotModel;
 import net.minecraft.client.model.ParrotModel;
 import net.minecraft.client.model.PhantomModel;
 import net.minecraft.client.model.PiglinModel;
@@ -68,7 +70,7 @@ import net.minecraft.client.model.WitherBossModel;
 import net.minecraft.client.model.WolfModel;
 import net.minecraft.client.model.ZombieModel;
 import net.minecraft.client.model.ZombieVillagerModel;
-import net.minecraft.client.model.geom.ModelPart;
+import net.minecraft.client.model.dragon.EnderDragonModel;
 import net.minecraft.client.renderer.entity.layers.ArrowLayer;
 import net.minecraft.client.renderer.entity.layers.BeeStingerLayer;
 import net.minecraft.client.renderer.entity.layers.CapeLayer;
@@ -79,17 +81,20 @@ import net.minecraft.client.renderer.entity.layers.ItemInHandLayer;
 import net.minecraft.client.renderer.entity.layers.ParrotOnShoulderLayer;
 import net.minecraft.client.renderer.entity.layers.SpinAttackEffectLayer;
 import net.minecraft.client.renderer.entity.layers.WingsLayer;
+import net.minecraft.client.renderer.entity.state.AvatarRenderState;
+import net.minecraft.client.renderer.entity.state.CamelRenderState;
 import net.minecraft.client.renderer.entity.state.EntityRenderState;
 import net.minecraft.client.renderer.entity.state.EquineRenderState;
-import net.minecraft.client.renderer.entity.state.PlayerRenderState;
+import net.minecraft.client.renderer.entity.state.GoatRenderState;
+import net.minecraft.client.renderer.entity.state.IllagerRenderState;
+import net.minecraft.core.component.DataComponents;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.animal.armadillo.Armadillo;
 import net.minecraft.world.entity.boss.enderdragon.EnderDragon;
+import net.minecraft.world.entity.monster.AbstractIllager;
 import net.minecraft.world.entity.monster.Bogged;
-import net.minecraft.world.entity.monster.Evoker;
-import net.minecraft.world.entity.monster.Illusioner;
-import net.minecraft.world.entity.monster.Vindicator;
 import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.item.equipment.Equippable;
 
 public class VanillaRagdollHook implements RagdollHook {
 
@@ -183,7 +188,7 @@ public class VanillaRagdollHook implements RagdollHook {
 			
 			if (model instanceof PlayerModel) {
 				PlayerModel playerModel = (PlayerModel) model;
-				PlayerRenderState playerState = (PlayerRenderState) renderState;
+				AvatarRenderState playerState = (AvatarRenderState) renderState;
 				
 				try {
 					int leftPantsOffset = indices.get("left_pants").index;
@@ -320,45 +325,31 @@ public class VanillaRagdollHook implements RagdollHook {
 			} else if (model instanceof ZombieVillagerModel) {
 				ragdoll.addConnection(hatOffset, headOffset, true, true);
 				int count = RagdollMapper.countModelParts(entity, model);
-
+				
 				if (count < ragdoll.bodies.size()) {
 					// offsets for invisible head and hat
-					int nbodyOffset = 0;
-					int nrightArmOffset = 2;
-					int nleftArmOffset = 3;
-					int nrightLegOffset = 4;
-					int nleftLegOffset = 5;
-					int overlays = (int) Math.ceil(ragdoll.bodies.size() / (double) count);
-
 					boolean hasHat = ragdoll.bodies.size() % count != 0;
+					int overlays = (int) Math.ceil(ragdoll.bodies.size() / (double) count);
+					int offset = 0;
 					
 					for (int i = 1; i < overlays; i++) {
-						int offset = count * i + ((i != 1) ? (hasHat ? -4 : 0) : 0);
+						offset += count;
 						
 						if (i == 1 && hasHat) {
-							ragdoll.addConnection(nbodyOffset + offset, bodyOffset, true, true);
-							ragdoll.addConnection(nbodyOffset + 1 + offset, bodyOffset, true, true);
-							ragdoll.addConnection(nleftArmOffset + offset, leftArmOffset, true, true);
-							ragdoll.addConnection(nrightArmOffset + offset, rightArmOffset, true, true);
-							ragdoll.addConnection(nrightLegOffset + offset, rightLegOffset, true, true);
-							ragdoll.addConnection(nleftLegOffset + offset, leftLegOffset, true, true);
+							offset -= 4;
 						} else {
 							ragdoll.addConnection(headOffset + offset, headOffset, true, true);
-							// nose
 							ragdoll.addConnection(headOffset + 1 + offset, headOffset, true, true);
-							
-							ragdoll.addConnection(bodyOffset + offset, bodyOffset, true, true);
-							ragdoll.addConnection(bodyOffset + 1 + offset, bodyOffset, true, true);
-							
-							ragdoll.addConnection(leftArmOffset + offset, leftArmOffset, true, true);
-							ragdoll.addConnection(rightArmOffset + offset, rightArmOffset, true, true);
-							ragdoll.addConnection(rightLegOffset + offset, rightLegOffset, true, true);
-							ragdoll.addConnection(leftLegOffset + offset, leftLegOffset, true, true);
-							
 							ragdoll.addConnection(hatOffset + offset, headOffset, true, true);
-							// hat rim
 							ragdoll.addConnection(hatOffset + 1 + offset, headOffset, true, true);
 						}
+						
+						ragdoll.addConnection(bodyOffset + offset, bodyOffset, true, true);
+						ragdoll.addConnection(bodyOffset + 1 + offset, bodyOffset, true, true);
+						ragdoll.addConnection(leftArmOffset + offset, leftArmOffset, true, true);
+						ragdoll.addConnection(rightArmOffset + offset, rightArmOffset, true, true);
+						ragdoll.addConnection(rightLegOffset + offset, rightLegOffset, true, true);
+						ragdoll.addConnection(leftLegOffset + offset, leftLegOffset, true, true);
 					}
 				}
 			}
@@ -369,12 +360,15 @@ public class VanillaRagdollHook implements RagdollHook {
 			int headOffset = indices.get("head").index;
 			
 			if (model instanceof GoatModel) {
-				headOffset = 3;
-				ragdoll.addConnection(0, headOffset, true);
-				ragdoll.addConnection(1, headOffset, true);
-				ragdoll.addConnection(2, headOffset, true);
-				ragdoll.addConnection(4, headOffset, true);
-				ragdoll.addConnection(5, headOffset, true);
+				GoatRenderState goatState = (GoatRenderState) renderState;
+				headOffset = headOffset + 2;
+				ragdoll.addConnection(headOffset - 2, headOffset, true, true); // right ear
+				ragdoll.addConnection(headOffset - 1, headOffset, true, true); // left ear
+				
+				if (goatState.hasLeftHorn) ragdoll.addConnection(indices.get("left_horn").index, headOffset, true);
+				if (goatState.hasRightHorn) ragdoll.addConnection(indices.get("right_horn").index, headOffset, true);
+				
+				ragdoll.addConnection(indices.get("nose").index, headOffset, true, true);
 			}
 			
 			int bodyOffset = indices.get("body").index;
@@ -444,12 +438,14 @@ public class VanillaRagdollHook implements RagdollHook {
 			
 			RagdollMapper.getCuboids(ragdoll, model.root(), new Counter());
 		} else if (model instanceof CreeperModel) {
-			int headOffset = 0;
-			int rightArmOffset = 1;
-			int rightLegOffset = 2;
-			int leftLegOffset = 3;
-			int bodyOffset = 4;
-			int leftArmOffset = 5;
+			Map<String, ModelPartIndex> indices = RagdollMapper.getModelPartIndices(model);
+			
+			int headOffset = indices.get("head").index;
+			int bodyOffset = indices.get("body").index;
+			int rightArmOffset = indices.get("right_front_leg").index;
+			int leftArmOffset = indices.get("left_front_leg").index;
+			int rightLegOffset = indices.get("right_hind_leg").index;
+			int leftLegOffset = indices.get("left_hind_leg").index;
 
 			ragdoll.addConnection(headOffset, bodyOffset);
 			ragdoll.addConnection(rightArmOffset, bodyOffset);
@@ -487,6 +483,26 @@ public class VanillaRagdollHook implements RagdollHook {
 			ragdoll.addConnection(7, 5);
 			ragdoll.addConnection(8, 5);
 			ragdoll.addConnection(9, 5);
+		} else if (model instanceof HappyGhastModel) {
+			Map<String, ModelPartIndex> indices = RagdollMapper.getModelPartIndices(model);
+
+			int bodyOffset = indices.get("body").index;
+			
+			ragdoll.addConnection(indices.get("tentacle0").index, bodyOffset);
+			ragdoll.addConnection(indices.get("tentacle1").index, bodyOffset);
+			ragdoll.addConnection(indices.get("tentacle2").index, bodyOffset);
+			ragdoll.addConnection(indices.get("tentacle3").index, bodyOffset);
+			ragdoll.addConnection(indices.get("tentacle4").index, bodyOffset);
+			ragdoll.addConnection(indices.get("tentacle5").index, bodyOffset);
+			ragdoll.addConnection(indices.get("tentacle6").index, bodyOffset);
+			ragdoll.addConnection(indices.get("tentacle7").index, bodyOffset);
+			ragdoll.addConnection(indices.get("tentacle8").index, bodyOffset);
+			
+			if (indices.get("inner_body") != null) {
+				int innerBodyOffset = indices.get("inner_body").index;
+				
+				ragdoll.addConnection(innerBodyOffset, bodyOffset, true, true);
+			}
 		} else if (model instanceof IronGolemModel) {
 			int headOffset = 0;
 			int noseOffset = 1;
@@ -619,15 +635,17 @@ public class VanillaRagdollHook implements RagdollHook {
 			ragdoll.addConnection(leftLegOffset, bodyOffset);
 			ragdoll.addConnection(armsOffset, bodyOffset);
 		} else if (model instanceof VillagerModel) {
-			int headOffset = 0;
-			int noseOffset = 1;
-			int hatOffset = 2;
-			int hatRimOffset = 3;
-			int leftLegOffset = 4;
-			int rightLegOffset = 5;
-			int armsOffset = 6;
-			int bodyOffset = 9;
-			int jacketOffset = 10;
+			Map<String, ModelPartIndex> indices = RagdollMapper.getModelPartIndices(model);
+			
+			int headOffset = indices.get("head").index;
+			int noseOffset = indices.get("nose").index;
+			int bodyOffset = indices.get("body").index;
+			int hatOffset = indices.get("hat").index;
+			int hatRimOffset = indices.get("hat_rim").index;
+			int rightLegOffset = indices.get("right_leg").index;
+			int leftLegOffset = indices.get("left_leg").index;
+			int armsOffset = indices.get("arms").index;
+			int jacketOffset = indices.get("jacket").index;
 
 			ragdoll.addConnection(hatOffset, headOffset, true);
 			ragdoll.addConnection(hatRimOffset, headOffset, true);
@@ -637,100 +655,66 @@ public class VanillaRagdollHook implements RagdollHook {
 			ragdoll.addConnection(armsOffset, bodyOffset, true);
 			ragdoll.addConnection(armsOffset + 1, bodyOffset, true);
 			ragdoll.addConnection(armsOffset + 2, bodyOffset, true);
-			ragdoll.addConnection(rightLegOffset, bodyOffset);
-			ragdoll.addConnection(leftLegOffset, bodyOffset);
+			ragdoll.addConnection(rightLegOffset, bodyOffset).stopCollision = true;
+			ragdoll.addConnection(leftLegOffset, bodyOffset).stopCollision = true;
 			ragdoll.addConnection(armsOffset, bodyOffset);
-			
+
 			int count = RagdollMapper.countModelParts(entity, model);
 			
 			if (count < ragdoll.bodies.size()) {
 				// offsets for invisible head and hat
-				int nleftLegOffset = 0;
-				int nrightLegOffset = 1;
-				int narmsOffset = 2;
-				int nbodyOffset = 5;
-				int njacketOffset = 6;
-				int overlays = (int) Math.ceil(ragdoll.bodies.size() / (double) count);
-
 				boolean hasHat = ragdoll.bodies.size() % count != 0;
+				int overlays = (int) Math.ceil(ragdoll.bodies.size() / (double) count);
+				int offset = 0;
 				
 				for (int i = 1; i < overlays; i++) {
-					int offset = count * i + ((i != 1) ? (hasHat ? -4 : 0) : 0);
+					offset += count;
 					
 					if (i == 1 && hasHat) {
-						ragdoll.addConnection(nbodyOffset + offset, bodyOffset, true, true);
-						ragdoll.addConnection(njacketOffset + offset, bodyOffset, true, true);
-						ragdoll.addConnection(narmsOffset + offset, bodyOffset, true, true);
-						ragdoll.addConnection(narmsOffset + 1 + offset, bodyOffset, true, true);
-						ragdoll.addConnection(narmsOffset + 2 + offset, bodyOffset, true, true);
-						ragdoll.addConnection(nrightLegOffset + offset, rightLegOffset, true, true);
-						ragdoll.addConnection(nleftLegOffset + offset, leftLegOffset, true, true);
+						offset -= 4;
 					} else {
 						ragdoll.addConnection(hatOffset + offset, headOffset, true, true);
 						ragdoll.addConnection(hatRimOffset + offset, headOffset, true, true);
 						ragdoll.addConnection(noseOffset + offset, headOffset, true, true);
 						ragdoll.addConnection(headOffset + offset, headOffset, true, true);
-						
-						ragdoll.addConnection(bodyOffset + offset, bodyOffset, true, true);
-						ragdoll.addConnection(jacketOffset + offset, bodyOffset, true, true);
-						ragdoll.addConnection(armsOffset + offset, bodyOffset, true, true);
-						ragdoll.addConnection(armsOffset + 1 + offset, bodyOffset, true, true);
-						ragdoll.addConnection(armsOffset + 2 + offset, bodyOffset, true, true);
-						ragdoll.addConnection(rightLegOffset + offset, rightLegOffset, true, true);
-						ragdoll.addConnection(leftLegOffset + offset, leftLegOffset, true, true);
 					}
+					
+					ragdoll.addConnection(bodyOffset + offset, bodyOffset, true, true);
+					ragdoll.addConnection(jacketOffset + offset, bodyOffset, true, true);
+					ragdoll.addConnection(armsOffset + offset, bodyOffset, true, true);
+					ragdoll.addConnection(armsOffset + 1 + offset, bodyOffset, true, true);
+					ragdoll.addConnection(armsOffset + 2 + offset, bodyOffset, true, true);
+					ragdoll.addConnection(rightLegOffset + offset, rightLegOffset, true, true);
+					ragdoll.addConnection(leftLegOffset + offset, leftLegOffset, true, true);
 				}
 			}
 		} else if (model instanceof IllagerModel) {
-			if (entity instanceof Illusioner) {
-				int headOffset = 0;
-				int noseOffset = 1;
-				int hatOffset = 2;
-				int leftLegOffset = 3;
-				int rightLegOffset = 4;
-				int arms1Offset = 5;
-				int arms2Offset = 6;
-				int leftShoulderOffset = 7;
-				int body1Offset = 8;
-				int body2Offset = 9;
+			Map<String, ModelPartIndex> indices = RagdollMapper.getModelPartIndices(model);
+			
+			int headOffset = indices.get("head").index;
+			int noseOffset = indices.get("nose").index;
+			int bodyOffset = indices.get("body").index;
+			int rightLegOffset = indices.get("right_leg").index;
+			int leftLegOffset = indices.get("left_leg").index;
 
-				ragdoll.addConnection(hatOffset, headOffset, true);
+			IllagerRenderState illagerState = (IllagerRenderState) renderState;
+			
+			if (illagerState.armPose == AbstractIllager.IllagerArmPose.CROSSED) {
+				// combined arms
+				int armsOffset = indices.get("arms").index;
+				int leftShoulderOffset = indices.get("left_shoulder").index;
 				ragdoll.addConnection(noseOffset, headOffset, true);
-				ragdoll.addConnection(headOffset, body1Offset);
-				ragdoll.addConnection(leftLegOffset, body1Offset);
-				ragdoll.addConnection(arms1Offset, body1Offset, true);
-				ragdoll.addConnection(rightLegOffset, body1Offset);
-				ragdoll.addConnection(arms2Offset, body1Offset, true);
-				ragdoll.addConnection(leftShoulderOffset, body1Offset, true);
-				ragdoll.addConnection(body2Offset, body1Offset, true);
-			} else if (entity instanceof Evoker || entity instanceof Vindicator) {
-				int headOffset = 0;
-				int noseOffset = 1;
-				int leftLegOffset = 2;
-				int rightLegOffset = 3;
-				int arms1Offset = 4;
-				int arms2Offset = 5;
-				int leftShoulderOffset = 6;
-				int body1Offset = 7;
-				int body2Offset = 8;
-	
-				ragdoll.addConnection(noseOffset, headOffset, true);
-				ragdoll.addConnection(headOffset, body1Offset);
-				ragdoll.addConnection(leftLegOffset, body1Offset);
-				ragdoll.addConnection(arms1Offset, body1Offset, true);
-				ragdoll.addConnection(rightLegOffset, body1Offset);
-				ragdoll.addConnection(arms2Offset, body1Offset, true);
-				ragdoll.addConnection(leftShoulderOffset, body1Offset, true);
-				ragdoll.addConnection(body2Offset, body1Offset, true);
+				ragdoll.addConnection(headOffset, bodyOffset);
+				ragdoll.addConnection(leftLegOffset, bodyOffset);
+				ragdoll.addConnection(armsOffset, bodyOffset, true);
+				ragdoll.addConnection(rightLegOffset, bodyOffset);
+				ragdoll.addConnection(armsOffset + 1, bodyOffset, true);
+				ragdoll.addConnection(leftShoulderOffset, bodyOffset, true);
+				ragdoll.addConnection(bodyOffset + 1, bodyOffset, true);
 			} else {
-				int headOffset = 0;
-				int noseOffset = 1;
-				int leftLegOffset = 2;
-				int rightArmOffset = 3;
-				int rightLegOffset = 4;
-				int leftArmOffset = 5;
-				int bodyOffset = 6;
-	
+				// individual arms
+				int rightArmOffset = indices.get("right_arm").index;
+				int leftArmOffset = indices.get("left_arm").index;
 				ragdoll.addConnection(noseOffset, headOffset, true);
 				ragdoll.addConnection(headOffset, bodyOffset);
 				ragdoll.addConnection(leftLegOffset, bodyOffset);
@@ -743,19 +727,20 @@ public class VanillaRagdollHook implements RagdollHook {
 			if (RagdollMapper.countModelParts(entity, model) < ragdoll.bodies.size())
 				ragdoll.addOverlayConnections(true);
 		} else if (model instanceof StriderModel) {
-			int leftLegOffset = 0;
-			int rightLegOffset = 1;
-			int bodyOffset = 2;
+			Map<String, ModelPartIndex> indices = RagdollMapper.getModelPartIndices(model);
+			int rightLegOffset = indices.get("right_leg").index;
+			int leftLegOffset = indices.get("left_leg").index;
+			int bodyOffset = indices.get("body").index;
 
 			ragdoll.addConnection(leftLegOffset, bodyOffset);
 			ragdoll.addConnection(rightLegOffset, bodyOffset);
 			ragdoll.addConnection(leftLegOffset, bodyOffset);
-			ragdoll.addConnection(3, bodyOffset, true);
-			ragdoll.addConnection(4, bodyOffset, true);
-			ragdoll.addConnection(5, bodyOffset, true);
-			ragdoll.addConnection(6, bodyOffset, true);
-			ragdoll.addConnection(7, bodyOffset, true);
-			ragdoll.addConnection(8, bodyOffset, true);
+			ragdoll.addConnection(indices.get("right_top_bristle").index, bodyOffset, true);
+			ragdoll.addConnection(indices.get("right_bottom_bristle").index, bodyOffset, true);
+			ragdoll.addConnection(indices.get("left_top_bristle").index, bodyOffset, true);
+			ragdoll.addConnection(indices.get("left_bottom_bristle").index, bodyOffset, true);
+			ragdoll.addConnection(indices.get("right_middle_bristle").index, bodyOffset, true);
+			ragdoll.addConnection(indices.get("left_middle_bristle").index, bodyOffset, true);
 
 			ragdoll.bodies.get(bodyOffset).backfaceCulling = false;
 		} else if (model instanceof RavagerModel) {
@@ -798,7 +783,7 @@ public class VanillaRagdollHook implements RagdollHook {
 			ragdoll.addConnection(bodyChildOffset, bodyOffset, true);
 			ragdoll.addConnection(rightEarOffset, headOffset, true);
 			ragdoll.addConnection(leftEarOffset, headOffset, true);
-			
+
 			ragdoll.addConnection(rightWingTipOffset, rightWingOffset, true);
 			ragdoll.addConnection(rightWingOffset, bodyOffset);
 			ragdoll.addConnection(leftWingTipOffset, leftWingOffset, true);
@@ -864,7 +849,7 @@ public class VanillaRagdollHook implements RagdollHook {
 			ragdoll.addConnection(centerHeadOffset, ribcageOffset);
 			
 			RagdollMapper.getCuboids(ragdoll, model.root(), new Counter());
-		} else if (model instanceof OcelotModel) {
+		} else if (model instanceof FelineModel) {
 			Map<String, ModelPartIndex> indices = RagdollMapper.getModelPartIndices(model);
 			
 			int headOffset = indices.get("head").index;
@@ -886,16 +871,18 @@ public class VanillaRagdollHook implements RagdollHook {
 			
 			RagdollMapper.getCuboids(ragdoll, model.root(), new Counter());
 		} else if (model instanceof FoxModel) {
-			int headOffset = 0;
-			int noseOffset = 1;
-			int rightEarOffset = 2;
-			int leftEarOffset = 3;
-			int bodyOffset = 4;
-			int tailOffset = 5;
-			int leg1Offset = 6;
-			int leg2Offset = 7;
-			int leg3Offset = 8;
-			int leg4Offset = 9;
+			Map<String, ModelPartIndex> indices = RagdollMapper.getModelPartIndices(model);
+			
+			int headOffset = indices.get("head").index;
+			int noseOffset = indices.get("nose").index;
+			int rightEarOffset = indices.get("right_ear").index;
+			int leftEarOffset = indices.get("left_ear").index;
+			int bodyOffset = indices.get("body").index;
+			int tailOffset = indices.get("tail").index;
+			int leg1Offset = indices.get("right_hind_leg").index;
+			int leg2Offset = indices.get("left_hind_leg").index;
+			int leg3Offset = indices.get("right_front_leg").index;
+			int leg4Offset = indices.get("left_front_leg").index;
 
 			ragdoll.addConnection(noseOffset, headOffset, true);
 			ragdoll.addConnection(rightEarOffset, headOffset, true);
@@ -1021,19 +1008,20 @@ public class VanillaRagdollHook implements RagdollHook {
 			if (count < ragdoll.bodies.size())
 				ragdoll.addOverlayConnections(true, Math.max(2, ragdoll.bodies.size() / count));
 		} else if (model instanceof LlamaModel) {
-			int headOffset = 0;
-			int neckOffset = 1;
-			int earLeftOffset = 2;
-			int earRightOffset = 3;
-			int bodyOffset = 4;
-			int rightFrontLegOffset = 5;
-			int rightHindLegOffset = 6;
-			int leftHindLegOffset = 7;
-			int leftFrontLegOffset = 8;
+			Map<String, ModelPartIndex> indices = RagdollMapper.getModelPartIndices(model);
+			int headOffset = indices.get("head").index;
+			int neckOffset = headOffset + 1;
+			int earLeftOffset = headOffset + 2;
+			int earRightOffset = headOffset + 3;
+			int bodyOffset = indices.get("body").index;
+			int rightFrontLegOffset = indices.get("right_front_leg").index;
+			int rightHindLegOffset = indices.get("right_hind_leg").index;
+			int leftHindLegOffset = indices.get("left_hind_leg").index;
+			int leftFrontLegOffset = indices.get("left_front_leg").index;
 			
 			// don't use chest positions to let them pop off the model
-			int rightChestOffset = 9;
-			int leftChestOffset = 10;
+			int rightChestOffset = indices.get("right_chest").index;
+			int leftChestOffset = indices.get("left_chest").index;
 			
 			ragdoll.addConnection(headOffset, neckOffset, true);
 			ragdoll.addConnection(earLeftOffset, neckOffset, true);
@@ -1048,55 +1036,40 @@ public class VanillaRagdollHook implements RagdollHook {
 			if (RagdollMapper.countModelParts(entity, model) < ragdoll.bodies.size())
 				ragdoll.addOverlayConnections(true);
 		} else if (model instanceof CamelModel) {
-		    String SADDLE = "saddle";
-		    String REINS = "reins";
-			ModelPart root = ((CamelModel) model).root();
-	        ModelPart body = root.getChild("body");
-	        ModelPart head = body.getChild("head");
+			Map<String, ModelPartIndex> indices = RagdollMapper.getModelPartIndices(model);
+			CamelRenderState camelRenderState = (CamelRenderState) renderState;
+			Equippable equippable = camelRenderState.saddle.get(DataComponents.EQUIPPABLE);
+	        boolean saddle = equippable != null && !equippable.assetId().isEmpty();
+	        boolean reins = camelRenderState.isRidden;
 	        
-	        boolean saddle = body.getChild(SADDLE).visible;
-	        boolean reins = head.getChild(REINS).visible;
-			
-			int rightFrontLegOffset = 0;
-			int rightHindLegOffset = 1;
-			int leftHindLegOffset = 2;
-			int bodyOffset = 3;
-			int headOffset = 4;
-			int neck1Offset = 5;
-			int neck2Offset = 6;
-			int earRightOffset = 7;
-			int earLeftOffset = 8;
-			int humpOffset = 9;
-			int tailOffset = 10;
-			int leftFrontLegOffset = 11;
+			int rightFrontLegOffset = indices.get("right_front_leg").index;
+			int leftFrontLegOffset = indices.get("left_front_leg").index;
+			int rightHindLegOffset = indices.get("right_hind_leg").index;
+			int leftHindLegOffset = indices.get("left_hind_leg").index;
+			int bodyOffset = indices.get("body").index;
+			int headOffset = indices.get("head").index;
+			int neck1Offset = headOffset + 1;
+			int neck2Offset = headOffset + 2;
+			int earRightOffset = indices.get("right_ear").index;
+			int earLeftOffset = indices.get("left_ear").index;
+			int humpOffset = indices.get("hump").index;
+			int tailOffset = indices.get("tail").index;
 			
 			if (saddle) {
 				// we don't attach the reins in the end
 				// because when the camel is dead it should no longer
 				// have reins attached to it
 				int reinOffset = reins ? 3 : 0;
-
-				earRightOffset = 12;
-				earLeftOffset = 13 + reinOffset;
-				humpOffset = 14 + reinOffset;
-				tailOffset = 18 + reinOffset;
-				leftFrontLegOffset = 19 + reinOffset;
+				int saddleHump1Offset = 12 + 15 + reinOffset;
+				int saddleHump2Offset = 12 + 16 + reinOffset;
+				int saddleBodyOffset = 12 + 17 + reinOffset;
+				int bridleOffset = 12 + 7;
 				
-				int saddleHump1Offset = 15 + reinOffset;
-				int saddleHump2Offset = 16 + reinOffset;
-				int saddleBodyOffset = 17 + reinOffset;
-				
-				int bridle1Offset = 7;
-				int bridle2Offset = 8;
-				int bridle3Offset = 9;
-				int bridle4Offset = 10;
-				int bridle5Offset = 11;
-				
-				ragdoll.addConnection(bridle1Offset, neck2Offset, true);
-				ragdoll.addConnection(bridle2Offset, neck2Offset, true);
-				ragdoll.addConnection(bridle3Offset, neck2Offset, true);
-				ragdoll.addConnection(bridle4Offset, neck2Offset, true);
-				ragdoll.addConnection(bridle5Offset, neck2Offset, true);
+				ragdoll.addConnection(bridleOffset, neck2Offset, true);
+				ragdoll.addConnection(bridleOffset + 1, neck2Offset, true);
+				ragdoll.addConnection(bridleOffset + 2, neck2Offset, true);
+				ragdoll.addConnection(bridleOffset + 3, neck2Offset, true);
+				ragdoll.addConnection(bridleOffset + 4, neck2Offset, true);
 
 				ragdoll.addConnection(saddleHump1Offset, bodyOffset, true);
 				ragdoll.addConnection(saddleHump2Offset, bodyOffset, true);
@@ -1116,8 +1089,7 @@ public class VanillaRagdollHook implements RagdollHook {
 			ragdoll.addConnection(leftHindLegOffset, bodyOffset);
 			ragdoll.addConnection(leftFrontLegOffset, bodyOffset);
 			
-			if (RagdollMapper.countModelParts(entity, model) < ragdoll.bodies.size())
-				ragdoll.addOverlayConnections(true);
+			ragdoll.removeUnused();
 		} else if (model instanceof HoglinModel) {
 			Map<String, ModelPartIndex> indices = RagdollMapper.getModelPartIndices(model);
 			
@@ -1142,8 +1114,8 @@ public class VanillaRagdollHook implements RagdollHook {
 			
 			ragdoll.addConnection(rightHornOffset, headOffset, true);
 			ragdoll.addConnection(leftHornOffset, headOffset, true);
-			ragdoll.addConnection(rightEarOffset, headOffset, true);
-			ragdoll.addConnection(leftEarOffset, headOffset, true);
+			ragdoll.addConnection(rightEarOffset, headOffset);
+			ragdoll.addConnection(leftEarOffset, headOffset);
 			ragdoll.addConnection(maneOffset, bodyOffset, true);
 			
 			RagdollMapper.getCuboids(ragdoll, model.root(), new Counter());
@@ -1374,17 +1346,19 @@ public class VanillaRagdollHook implements RagdollHook {
 			
 			RagdollMapper.getCuboids(ragdoll, allay.root(), new Counter());
 		} else if (model instanceof WardenModel warden) {
+			Map<String, ModelPartIndex> indices = RagdollMapper.getModelPartIndices(model);
+			
 			int bone = 0;
-			int leftLeg = 0;
-			int rightLeg = 1;
-			int body = 2;
-			int head = 3;
-			int rightTendril = 4;
-			int leftTendril = 5;
-			int rightArm = 6;
-			int leftArm = 7;
-			int leftRibcage = 8;
-			int rightRibcage = 9;
+			int rightLeg = indices.get("right_leg").index;
+			int leftLeg = indices.get("left_leg").index;
+			int body = indices.get("body").index;
+			int head = indices.get("head").index;
+			int rightTendril = indices.get("right_tendril").index;
+			int leftTendril = indices.get("left_tendril").index;
+			int rightArm = indices.get("right_arm").index;
+			int leftArm = indices.get("left_arm").index;
+			int rightRibcage = indices.get("right_ribcage").index;
+			int leftRibcage = indices.get("left_ribcage").index;
 			
 			ragdoll.addConnection(rightTendril, head, true, true);
 			ragdoll.addConnection(leftTendril, head, true, true);
@@ -1396,55 +1370,58 @@ public class VanillaRagdollHook implements RagdollHook {
 			ragdoll.addConnection(leftRibcage, body, true, true);
 			ragdoll.addConnection(rightRibcage, body, true, true);
 
-			int leftLegBL = 10;
-			int rightLegBL = 11;
-			int headBL = 12;
-			int rightArmBL = 13;
-			int leftArmBL = 14;
-
-			int leftLegP1 = 15;
-			int rightLegP1 = 16;
-			int bodyP1 = 17;
-			int headP1 = 18;
-			int rightArmP1 = 19;
-			int leftArmP1 = 20;
-
-			int leftLegP2 = 21;
-			int rightLegP2 = 22;
-			int bodyP2 = 23;
-			int headP2 = 24;
-			int rightArmP2 = 25;
-			int leftArmP2 = 26;
-
-			int rightTendrilT = 27;
-			int leftTendrilT = 28;
+			ragdoll.removeUnused();
 			
-			int bodyH = 29;
-
-			ragdoll.addConnection(headBL, head, true, true);
-			ragdoll.addConnection(leftArmBL, leftArm, true, true);
-			ragdoll.addConnection(rightArmBL, rightArm, true, true);
-			ragdoll.addConnection(leftLegBL, leftLeg, true, true);
-			ragdoll.addConnection(rightLegBL, rightLeg, true, true);
-			
-			ragdoll.addConnection(bodyP1, body, true, true);
-			ragdoll.addConnection(headP1, head, true, true);
-			ragdoll.addConnection(leftArmP1, leftArm, true, true);
-			ragdoll.addConnection(rightArmP1, rightArm, true, true);
-			ragdoll.addConnection(leftLegP1, leftLeg, true, true);
-			ragdoll.addConnection(rightLegP1, rightLeg, true, true);
-			
-			ragdoll.addConnection(bodyP2, body, true, true);
-			ragdoll.addConnection(headP2, head, true, true);
-			ragdoll.addConnection(leftArmP2, leftArm, true, true);
-			ragdoll.addConnection(rightArmP2, rightArm, true, true);
-			ragdoll.addConnection(leftLegP2, leftLeg, true, true);
-			ragdoll.addConnection(rightLegP2, rightLeg, true, true);
-			
-			ragdoll.addConnection(leftTendrilT, leftTendril, true, true);
-			ragdoll.addConnection(rightTendrilT, rightTendril, true, true);
-			ragdoll.addConnection(bodyH, body, true, true);
-		} else if (entity instanceof EnderDragon) {
+			// emissive layers don't make sense when warden is dead
+//			int leftLegBL = 10;
+//			int rightLegBL = 11;
+//			int headBL = 12;
+//			int rightArmBL = 13;
+//			int leftArmBL = 14;
+//
+//			int leftLegP1 = 15;
+//			int rightLegP1 = 16;
+//			int bodyP1 = 17;
+//			int headP1 = 18;
+//			int rightArmP1 = 19;
+//			int leftArmP1 = 20;
+//
+//			int leftLegP2 = 21;
+//			int rightLegP2 = 22;
+//			int bodyP2 = 23;
+//			int headP2 = 24;
+//			int rightArmP2 = 25;
+//			int leftArmP2 = 26;
+//
+//			int rightTendrilT = 27;
+//			int leftTendrilT = 28;
+//			
+//			int bodyH = 29;
+//
+//			ragdoll.addConnection(headBL, head, true, true);
+//			ragdoll.addConnection(leftArmBL, leftArm, true, true);
+//			ragdoll.addConnection(rightArmBL, rightArm, true, true);
+//			ragdoll.addConnection(leftLegBL, leftLeg, true, true);
+//			ragdoll.addConnection(rightLegBL, rightLeg, true, true);
+//			
+//			ragdoll.addConnection(bodyP1, body, true, true);
+//			ragdoll.addConnection(headP1, head, true, true);
+//			ragdoll.addConnection(leftArmP1, leftArm, true, true);
+//			ragdoll.addConnection(rightArmP1, rightArm, true, true);
+//			ragdoll.addConnection(leftLegP1, leftLeg, true, true);
+//			ragdoll.addConnection(rightLegP1, rightLeg, true, true);
+//			
+//			ragdoll.addConnection(bodyP2, body, true, true);
+//			ragdoll.addConnection(headP2, head, true, true);
+//			ragdoll.addConnection(leftArmP2, leftArm, true, true);
+//			ragdoll.addConnection(rightArmP2, rightArm, true, true);
+//			ragdoll.addConnection(leftLegP2, leftLeg, true, true);
+//			ragdoll.addConnection(rightLegP2, rightLeg, true, true);
+//			
+//			ragdoll.addConnection(leftTendrilT, leftTendril, true, true);
+//			ragdoll.addConnection(rightTendrilT, rightTendril, true, true);
+//			ragdoll.addConnection(bodyH, body, true, true);
+		} else if (model instanceof EnderDragonModel) {
 			// ender dragon model is null because ender dragon has no living entity renderer and thus
 			// we have no access to it's model
 			Map<String, ModelPartIndex> indices = RagdollMapper.getModelPartIndices(model);
@@ -1587,6 +1564,24 @@ public class VanillaRagdollHook implements RagdollHook {
 				ragdoll.addConnection(tailOffset, bodyOffset);
 				RagdollMapper.getCuboids(ragdoll, model.root(), new Counter());
 			}
+		} else if (model instanceof CopperGolemModel) {
+			Map<String, ModelPartIndex> indices = RagdollMapper.getModelPartIndices(model);
+			
+			int headOffset = indices.get("head").index;
+			int bodyOffset = indices.get("body").index;
+			int rightArmOffset = indices.get("right_arm").index;
+			int leftArmOffset = indices.get("left_arm").index;
+			int rightLegOffset = indices.get("right_leg").index;
+			int leftLegOffset = indices.get("left_leg").index;
+			
+			ragdoll.addConnection(headOffset, bodyOffset);
+			ragdoll.addConnection(rightArmOffset, bodyOffset);
+			ragdoll.addConnection(leftArmOffset, bodyOffset);
+			ragdoll.addConnection(rightLegOffset, bodyOffset);
+			ragdoll.addConnection(leftLegOffset, bodyOffset);
+
+			RagdollMapper.getCuboids(ragdoll, model.root(), new Counter());
+			ragdoll.addOverlayConnections(true);
 		}
 	}
 
