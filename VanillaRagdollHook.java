@@ -7,70 +7,71 @@ import java.util.Map;
 import net.diebuddies.physics.PhysicsEntity;
 import net.diebuddies.physics.ragdoll.RagdollMapper.Counter;
 import net.diebuddies.physics.ragdoll.RagdollMapper.ModelPartIndex;
-import net.minecraft.client.model.AbstractEquineModel;
-import net.minecraft.client.model.AbstractPiglinModel;
-import net.minecraft.client.model.AllayModel;
-import net.minecraft.client.model.ArmadilloModel;
-import net.minecraft.client.model.ArmorStandModel;
-import net.minecraft.client.model.AxolotlModel;
-import net.minecraft.client.model.BatModel;
-import net.minecraft.client.model.BeeModel;
-import net.minecraft.client.model.BoggedModel;
-import net.minecraft.client.model.CamelModel;
-import net.minecraft.client.model.ChickenModel;
-import net.minecraft.client.model.CodModel;
-import net.minecraft.client.model.CopperGolemModel;
-import net.minecraft.client.model.CreakingModel;
-import net.minecraft.client.model.CreeperModel;
-import net.minecraft.client.model.DolphinModel;
-import net.minecraft.client.model.DrownedModel;
-import net.minecraft.client.model.EndermanModel;
-import net.minecraft.client.model.EndermiteModel;
 import net.minecraft.client.model.EntityModel;
-import net.minecraft.client.model.FelineModel;
-import net.minecraft.client.model.FoxModel;
-import net.minecraft.client.model.FrogModel;
-import net.minecraft.client.model.GhastModel;
-import net.minecraft.client.model.GoatModel;
-import net.minecraft.client.model.GuardianModel;
-import net.minecraft.client.model.HappyGhastModel;
-import net.minecraft.client.model.HoglinModel;
-import net.minecraft.client.model.HorseModel;
 import net.minecraft.client.model.HumanoidModel;
-import net.minecraft.client.model.IllagerModel;
-import net.minecraft.client.model.IronGolemModel;
-import net.minecraft.client.model.LlamaModel;
-import net.minecraft.client.model.ParrotModel;
-import net.minecraft.client.model.PhantomModel;
-import net.minecraft.client.model.PiglinModel;
-import net.minecraft.client.model.PlayerModel;
-import net.minecraft.client.model.PufferfishBigModel;
-import net.minecraft.client.model.PufferfishMidModel;
-import net.minecraft.client.model.PufferfishSmallModel;
 import net.minecraft.client.model.QuadrupedModel;
-import net.minecraft.client.model.RabbitModel;
-import net.minecraft.client.model.RavagerModel;
-import net.minecraft.client.model.SalmonModel;
-import net.minecraft.client.model.SheepModel;
-import net.minecraft.client.model.SilverfishModel;
-import net.minecraft.client.model.SkeletonModel;
-import net.minecraft.client.model.SnifferModel;
-import net.minecraft.client.model.SnowGolemModel;
-import net.minecraft.client.model.SpiderModel;
-import net.minecraft.client.model.SquidModel;
-import net.minecraft.client.model.StriderModel;
-import net.minecraft.client.model.TadpoleModel;
-import net.minecraft.client.model.TropicalFishModelA;
-import net.minecraft.client.model.TropicalFishModelB;
-import net.minecraft.client.model.VexModel;
-import net.minecraft.client.model.VillagerModel;
-import net.minecraft.client.model.WardenModel;
-import net.minecraft.client.model.WitchModel;
-import net.minecraft.client.model.WitherBossModel;
-import net.minecraft.client.model.WolfModel;
-import net.minecraft.client.model.ZombieModel;
-import net.minecraft.client.model.ZombieVillagerModel;
-import net.minecraft.client.model.dragon.EnderDragonModel;
+import net.minecraft.client.model.ambient.BatModel;
+import net.minecraft.client.model.animal.allay.AllayModel;
+import net.minecraft.client.model.animal.armadillo.ArmadilloModel;
+import net.minecraft.client.model.animal.axolotl.AxolotlModel;
+import net.minecraft.client.model.animal.bee.BeeModel;
+import net.minecraft.client.model.animal.camel.CamelModel;
+import net.minecraft.client.model.animal.chicken.ChickenModel;
+import net.minecraft.client.model.animal.dolphin.DolphinModel;
+import net.minecraft.client.model.animal.equine.AbstractEquineModel;
+import net.minecraft.client.model.animal.equine.HorseModel;
+import net.minecraft.client.model.animal.feline.FelineModel;
+import net.minecraft.client.model.animal.fish.CodModel;
+import net.minecraft.client.model.animal.fish.PufferfishBigModel;
+import net.minecraft.client.model.animal.fish.PufferfishMidModel;
+import net.minecraft.client.model.animal.fish.PufferfishSmallModel;
+import net.minecraft.client.model.animal.fish.SalmonModel;
+import net.minecraft.client.model.animal.fish.TropicalFishLargeModel;
+import net.minecraft.client.model.animal.fish.TropicalFishSmallModel;
+import net.minecraft.client.model.animal.fox.FoxModel;
+import net.minecraft.client.model.animal.frog.FrogModel;
+import net.minecraft.client.model.animal.frog.TadpoleModel;
+import net.minecraft.client.model.animal.ghast.HappyGhastModel;
+import net.minecraft.client.model.animal.goat.GoatModel;
+import net.minecraft.client.model.animal.golem.CopperGolemModel;
+import net.minecraft.client.model.animal.golem.IronGolemModel;
+import net.minecraft.client.model.animal.golem.SnowGolemModel;
+import net.minecraft.client.model.animal.llama.LlamaModel;
+import net.minecraft.client.model.animal.nautilus.NautilusModel;
+import net.minecraft.client.model.animal.parrot.ParrotModel;
+import net.minecraft.client.model.animal.rabbit.RabbitModel;
+import net.minecraft.client.model.animal.sheep.SheepModel;
+import net.minecraft.client.model.animal.sniffer.SnifferModel;
+import net.minecraft.client.model.animal.squid.SquidModel;
+import net.minecraft.client.model.animal.wolf.WolfModel;
+import net.minecraft.client.model.monster.creaking.CreakingModel;
+import net.minecraft.client.model.monster.creeper.CreeperModel;
+import net.minecraft.client.model.monster.dragon.EnderDragonModel;
+import net.minecraft.client.model.monster.enderman.EndermanModel;
+import net.minecraft.client.model.monster.endermite.EndermiteModel;
+import net.minecraft.client.model.monster.ghast.GhastModel;
+import net.minecraft.client.model.monster.guardian.GuardianModel;
+import net.minecraft.client.model.monster.hoglin.HoglinModel;
+import net.minecraft.client.model.monster.illager.IllagerModel;
+import net.minecraft.client.model.monster.phantom.PhantomModel;
+import net.minecraft.client.model.monster.piglin.AbstractPiglinModel;
+import net.minecraft.client.model.monster.piglin.PiglinModel;
+import net.minecraft.client.model.monster.ravager.RavagerModel;
+import net.minecraft.client.model.monster.silverfish.SilverfishModel;
+import net.minecraft.client.model.monster.skeleton.BoggedModel;
+import net.minecraft.client.model.monster.skeleton.SkeletonModel;
+import net.minecraft.client.model.monster.spider.SpiderModel;
+import net.minecraft.client.model.monster.strider.StriderModel;
+import net.minecraft.client.model.monster.vex.VexModel;
+import net.minecraft.client.model.monster.warden.WardenModel;
+import net.minecraft.client.model.monster.witch.WitchModel;
+import net.minecraft.client.model.monster.wither.WitherBossModel;
+import net.minecraft.client.model.monster.zombie.DrownedModel;
+import net.minecraft.client.model.monster.zombie.ZombieModel;
+import net.minecraft.client.model.monster.zombie.ZombieVillagerModel;
+import net.minecraft.client.model.npc.VillagerModel;
+import net.minecraft.client.model.object.armorstand.ArmorStandModel;
+import net.minecraft.client.model.player.PlayerModel;
 import net.minecraft.client.renderer.entity.layers.ArrowLayer;
 import net.minecraft.client.renderer.entity.layers.BeeStingerLayer;
 import net.minecraft.client.renderer.entity.layers.CapeLayer;
@@ -79,20 +80,22 @@ import net.minecraft.client.renderer.entity.layers.Deadmau5EarsLayer;
 import net.minecraft.client.renderer.entity.layers.HumanoidArmorLayer;
 import net.minecraft.client.renderer.entity.layers.ItemInHandLayer;
 import net.minecraft.client.renderer.entity.layers.ParrotOnShoulderLayer;
+import net.minecraft.client.renderer.entity.layers.SimpleEquipmentLayer;
 import net.minecraft.client.renderer.entity.layers.SpinAttackEffectLayer;
 import net.minecraft.client.renderer.entity.layers.WingsLayer;
+import net.minecraft.client.renderer.entity.state.ArmadilloRenderState;
 import net.minecraft.client.renderer.entity.state.AvatarRenderState;
 import net.minecraft.client.renderer.entity.state.CamelRenderState;
 import net.minecraft.client.renderer.entity.state.EntityRenderState;
 import net.minecraft.client.renderer.entity.state.EquineRenderState;
+import net.minecraft.client.renderer.entity.state.FrogRenderState;
 import net.minecraft.client.renderer.entity.state.GoatRenderState;
 import net.minecraft.client.renderer.entity.state.IllagerRenderState;
 import net.minecraft.core.component.DataComponents;
 import net.minecraft.world.entity.Entity;
-import net.minecraft.world.entity.animal.armadillo.Armadillo;
 import net.minecraft.world.entity.boss.enderdragon.EnderDragon;
-import net.minecraft.world.entity.monster.AbstractIllager;
-import net.minecraft.world.entity.monster.Bogged;
+import net.minecraft.world.entity.monster.illager.AbstractIllager;
+import net.minecraft.world.entity.monster.skeleton.Bogged;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.equipment.Equippable;
 
@@ -605,26 +608,27 @@ public class VanillaRagdollHook implements RagdollHook {
 			ragdoll.addConnection(headOffset + 4, headOffset, true);
 			ragdoll.addConnection(eye, headOffset, true);
 		} else if (model instanceof WitchModel) {
-			int headOffset = 0;
-			int noseOffset = 1;
-			int moleOffset = 2;
-			int hatOffset = 3;
-			int hatRimOffset = 4;
-			int hat2Offset = 5;
-			int hat3Offset = 6;
-			int hat4Offset = 7;
-			int leftLegOffset = 8;
-			int rightLegOffset = 9;
-			int armsOffset = 10;
-			int bodyOffset = 13;
-			int jacketOffset = 14;
+			Map<String, ModelPartIndex> indices = RagdollMapper.getModelPartIndices(model);
+
+			int headOffset = indices.get("head").index;
+			int noseOffset = indices.get("nose").index;
+			int bodyOffset = indices.get("body").index;
+			int hatOffset = indices.get("hat").index;
+			int hat2Offset = indices.get("hat2").index;
+			int hat3Offset = indices.get("hat3").index;
+			int hat4Offset = indices.get("hat4").index;
+			int rightLegOffset = indices.get("right_leg").index;
+			int leftLegOffset = indices.get("left_leg").index;
+			int armsOffset = indices.get("arms").index;
+			int jacketOffset = indices.get("jacket").index;
+			int moleOffset = indices.get("mole").index;
 
 			ragdoll.addConnection(moleOffset, headOffset, true);
 			ragdoll.addConnection(hat2Offset, headOffset, true);
 			ragdoll.addConnection(hat3Offset, headOffset, true);
 			ragdoll.addConnection(hat4Offset, headOffset, true);
 			ragdoll.addConnection(hatOffset, headOffset, true);
-			ragdoll.addConnection(hatRimOffset, headOffset, true);
+//			ragdoll.addConnection(hatRimOffset, headOffset, true);
 			ragdoll.addConnection(noseOffset, headOffset, true);
 			ragdoll.addConnection(headOffset, bodyOffset);
 			ragdoll.addConnection(jacketOffset, bodyOffset, true);
@@ -1138,23 +1142,25 @@ public class VanillaRagdollHook implements RagdollHook {
 			ragdoll.addConnection(topBackFinOffset, bodyBackOffset, true);
 			ragdoll.addConnection(backFinOffset, bodyBackOffset, true);
 		} else if (model instanceof AxolotlModel) {
-			int bodyOffset = 0;
-			int bodyGillsOffset = 1;
-			int headOffset = 2;
-			int topGillsOffset = 3;
-			int leftGillsOffset = 4;
-			int rightGillsOffset = 5;
-			int rightFrontLegOffset = 6;
-			int rightHindLegffset = 7;
-			int tailOffset = 8;
-			int leftHindLegOffset = 9;
-			int leftFrontLegOffset = 10;
+			Map<String, ModelPartIndex> indices = RagdollMapper.getModelPartIndices(model);
+			
+			int bodyOffset = indices.get("body").index;
+			int bodyGillsOffset = bodyOffset + 1;
+			int headOffset = indices.get("head").index;
+			int topGillsOffset = indices.get("top_gills").index;
+			int leftGillsOffset = indices.get("left_gills").index;
+			int rightGillsOffset = indices.get("right_gills").index;
+			int rightFrontLegOffset = indices.get("right_front_leg").index;
+			int rightHindLegffset = indices.get("right_hind_leg").index;
+			int tailOffset = indices.get("tail").index;
+			int leftHindLegOffset = indices.get("left_hind_leg").index;
+			int leftFrontLegOffset = indices.get("left_front_leg").index;
 			
 			ragdoll.addConnection(headOffset, bodyOffset);
 			ragdoll.addConnection(bodyGillsOffset, bodyOffset, true);
-			ragdoll.addConnection(topGillsOffset, bodyOffset, true);
-			ragdoll.addConnection(leftGillsOffset, bodyOffset, true);
-			ragdoll.addConnection(rightGillsOffset, bodyOffset, true);
+			ragdoll.addConnection(topGillsOffset, headOffset, true);
+			ragdoll.addConnection(leftGillsOffset, headOffset, true);
+			ragdoll.addConnection(rightGillsOffset, headOffset, true);
 			
 			ragdoll.addConnection(rightFrontLegOffset, bodyOffset, true);
 			ragdoll.addConnection(rightHindLegffset, bodyOffset, true);
@@ -1257,13 +1263,15 @@ public class VanillaRagdollHook implements RagdollHook {
 			ragdoll.addConnection(rightBlueBackFinOffset, bodyOffset, true);
 			ragdoll.addConnection(topBlueFrontFinOffset, bodyOffset, true);
 			ragdoll.addConnection(rightBlueFinOffset, bodyOffset, true);
-		} else if (model instanceof TropicalFishModelB) {
-			int leftFinOffset = 0;
-			int topFinOffset = 1;
-			int tailOffset = 2;
-			int rightFinOffset = 3;
-			int bodyOffset = 4;
-			int bottomFinOffset = 5;
+		} else if (model instanceof TropicalFishLargeModel) {
+			Map<String, ModelPartIndex> indices = RagdollMapper.getModelPartIndices(model);
+
+			int leftFinOffset = indices.get("left_fin").index;
+			int topFinOffset = indices.get("top_fin").index;
+			int tailOffset = indices.get("tail").index;
+			int rightFinOffset = indices.get("right_fin").index;
+			int bodyOffset = indices.get("body").index;
+			int bottomFinOffset = indices.get("bottom_fin").index;
 			
 			ragdoll.addConnection(leftFinOffset, bodyOffset, true, true);
 			ragdoll.addConnection(topFinOffset, bodyOffset, true, true);
@@ -1272,12 +1280,15 @@ public class VanillaRagdollHook implements RagdollHook {
 			ragdoll.addConnection(rightFinOffset, bodyOffset, true, true);
 			
 			ragdoll.addOverlayConnections(true);
-		} else if (model instanceof TropicalFishModelA) {
-			int leftFinOffset = 0;
-			int topFinOffset = 1;
-			int tailOffset = 2;
-			int rightFinOffset = 3;
-			int bodyOffset = 4;
+		} else if (model instanceof TropicalFishSmallModel) {
+			Map<String, ModelPartIndex> indices = RagdollMapper.getModelPartIndices(model);
+
+			
+			int leftFinOffset = indices.get("left_fin").index;
+			int topFinOffset = indices.get("top_fin").index;
+			int tailOffset = indices.get("tail").index;
+			int rightFinOffset = indices.get("right_fin").index;
+			int bodyOffset = indices.get("body").index;
 			
 			ragdoll.addConnection(leftFinOffset, bodyOffset, true, true);
 			ragdoll.addConnection(topFinOffset, bodyOffset, true, true);
@@ -1286,61 +1297,67 @@ public class VanillaRagdollHook implements RagdollHook {
 
 			ragdoll.addOverlayConnections(true);
 		} else if (model instanceof TadpoleModel) {
-			int bodyOffset = 1;
-			int tailOffset = 2;
+			Map<String, ModelPartIndex> indices = RagdollMapper.getModelPartIndices(model);
+			
+			int bodyOffset = indices.get("body").index;
+			int tailOffset = indices.get("tail").index;
 			
 			ragdoll.addConnection(tailOffset, bodyOffset, true, true);
 		} else if (model instanceof FrogModel frog) {
-			int leftLeg = 0;
-			int leftFoot = 1;
-			int rightLeg = 2;
-			int rightFoot = 3;
-			int body = 4;
-			int body2 = 5;
-			int head = 6;
-			int head2 = 7;
-			int rightEye = 8;
-			int leftEye = 9;
-			int rightArm = 10;
-			int rightHand = 11;
-			int tongue = 12;
-			int leftArm = 13;
-			int leftHand = 14;
+			Map<String, ModelPartIndex> indices = RagdollMapper.getModelPartIndices(model);
+			
+			int leftLeg = indices.get("left_leg").index;
+			int leftFoot = indices.get("left_foot").index;
+			int rightLeg = indices.get("right_leg").index;
+			int rightFoot = indices.get("right_foot").index;
+			int body = indices.get("body").index;
+			int bodyCroakingBody = indices.get("croaking_body").index;
+			int head = indices.get("head").index;
+			int head2 = head + 1;
+			int rightEye = indices.get("right_eye").index;
+			int leftEye = indices.get("left_eye").index;
+			int rightArm = indices.get("right_arm").index;
+			int rightHand = indices.get("right_hand").index;
+			int tongue = indices.get("tongue").index;
+			int leftArm = indices.get("left_arm").index;
+			int leftHand = indices.get("left_hand").index;
 			
 			ragdoll.addConnection(leftFoot, leftLeg, true, true);
 			ragdoll.addConnection(rightFoot, rightLeg, true, true);
 			ragdoll.addConnection(leftLeg, body);
 			ragdoll.addConnection(rightLeg, body);
 			ragdoll.addConnection(head2, body, true);
-			ragdoll.addConnection(body2, body, true);
 			ragdoll.addConnection(rightEye, body, true);
 			ragdoll.addConnection(leftEye, body, true);
 			ragdoll.addConnection(rightArm, body);
 			ragdoll.addConnection(leftArm, body);
 			ragdoll.addConnection(rightHand, rightArm, true, true);
 			ragdoll.addConnection(leftHand, leftArm, true, true);
-			ragdoll.addConnection(tongue, body);
+			ragdoll.addConnection(tongue, body, true, true);
 			ragdoll.addConnection(head, body, true, true);
 			
-			if (ragdoll.bodies.size() > 15) {
-				int croakingBody = 15;
-				ragdoll.addConnection(croakingBody, body, true);
+			FrogRenderState frogState = (FrogRenderState) renderState;
+			
+			if (frogState.croakAnimationState.isStarted()) {
+				ragdoll.addConnection(bodyCroakingBody, body, true);
 			}
 			
 			RagdollMapper.getCuboids(ragdoll, frog.root(), new Counter());
 		} else if (model instanceof AllayModel allay) {
-			int head = 0;
-			int body = 1;
-			int body2 = 2;
-			int rightArm = 3;
-			int leftArm = 4;
-			int rightWing = 5;
-			int leftWing = 6;
+			Map<String, ModelPartIndex> indices = RagdollMapper.getModelPartIndices(model);
+			
+			int head = indices.get("head").index;
+			int body = indices.get("body").index;
+			int body2 = body + 1;
+			int rightArm = indices.get("right_arm").index;
+			int leftArm = indices.get("left_arm").index;
+			int rightWing = indices.get("right_wing").index;
+			int leftWing = indices.get("left_wing").index;
 			
 			ragdoll.addConnection(head, body);
 			ragdoll.addConnection(rightArm, body);
 			ragdoll.addConnection(leftArm, body);
-			ragdoll.addConnection(body2, body);
+			ragdoll.addConnection(body2, body, true, true);
 			ragdoll.addConnection(rightWing, body, true, true);
 			ragdoll.addConnection(leftWing, body, true, true);
 			
@@ -1488,18 +1505,20 @@ public class VanillaRagdollHook implements RagdollHook {
 			
 			RagdollMapper.getCuboids(ragdoll, model.root(), new Counter());
 		} else if (model instanceof SnifferModel) {
-			int rightFrontLegOffset = 0;
-			int rightHindLegOffset = 1;
-			int rightMidLegOffset = 2;
-			int leftHindLegOffset = 3;
-			int bodyOffset = 4;
-			int headOffset = 7;
-			int noseOffset = 9;
-			int lowerBeakOffset = 10;
-			int rightEarOffset = 11;
-			int leftEarOffset = 12;
-			int leftMidLegOffset = 13;
-			int leftFrontLegOffset = 14;
+			Map<String, ModelPartIndex> indices = RagdollMapper.getModelPartIndices(model);
+
+			int rightFrontLegOffset = indices.get("right_front_leg").index;
+			int rightHindLegOffset = indices.get("right_hind_leg").index;
+			int rightMidLegOffset = indices.get("right_mid_leg").index;
+			int leftHindLegOffset = indices.get("left_hind_leg").index;
+			int bodyOffset = indices.get("body").index;
+			int headOffset = indices.get("head").index;
+			int noseOffset = indices.get("nose").index;
+			int lowerBeakOffset = indices.get("lower_beak").index;
+			int rightEarOffset = indices.get("right_ear").index;
+			int leftEarOffset = indices.get("left_ear").index;
+			int leftMidLegOffset = indices.get("left_mid_leg").index;
+			int leftFrontLegOffset = indices.get("left_front_leg").index;
 
 			ragdoll.addConnection(rightEarOffset, headOffset, true);
 			ragdoll.addConnection(leftEarOffset, headOffset, true);
@@ -1517,18 +1536,17 @@ public class VanillaRagdollHook implements RagdollHook {
 			
 			RagdollMapper.getCuboids(ragdoll, model.root(), new Counter());
 		} else if (model instanceof ArmadilloModel) {
-			boolean inShell = false;
+			ArmadilloRenderState armadilloState = (ArmadilloRenderState) renderState;
 			
-			if (entity instanceof Armadillo armadillo) {
-				inShell = armadillo.shouldHideInShell();
-			}
+			boolean inShell = armadilloState.isHidingInShell;
+			Map<String, ModelPartIndex> indices = RagdollMapper.getModelPartIndices(model);
 			
 			if (inShell) {
 				// body uses skip draw which causes it to not show up in the cuboids, so subtract everything
 				// after the body by the amount of cuboids skipped by body (2 in this case)
 				// first time skip draw variable gets used (except for warden emissive layers)
+				int cubeOffset = indices.get("cube").index;
 				int rightFrontLegOffset = 0;
-				int cubeOffset = 1;
 				int headOffset = 2;
 				int rightEarOffset = 3;
 				int leftEarOffset = 4;
@@ -1542,15 +1560,15 @@ public class VanillaRagdollHook implements RagdollHook {
 				ragdoll.addConnection(rightFrontLegOffset, cubeOffset);
 				ragdoll.addConnection(leftFrontLegOffset, cubeOffset);
 			} else {
-				int rightFrontLegOffset = 0;
-				int rightHindLegOffset = 1;
-				int leftHindLegOffset = 2;
-				int bodyOffset = 3;
-				int headOffset = 5;
-				int rightEarOffset = 6;
-				int leftEarOffset = 7;
-				int tailOffset = 8;
-				int leftFrontLegOffset = 9;
+				int rightFrontLegOffset = indices.get("right_front_leg").index;
+				int leftFrontLegOffset = indices.get("left_front_leg").index;
+				int headOffset = indices.get("head_cube").index;
+				int rightEarOffset = indices.get("right_ear_cube").index;
+				int leftEarOffset = indices.get("left_ear_cube").index;
+				int rightHindLegOffset = indices.get("right_hind_leg").index;
+				int leftHindLegOffset = indices.get("left_hind_leg").index;
+				int bodyOffset = indices.get("body").index;
+				int tailOffset = indices.get("tail").index;
 	
 				ragdoll.addConnection(rightEarOffset, headOffset, true);
 				ragdoll.addConnection(leftEarOffset, headOffset, true);
@@ -1582,6 +1600,21 @@ public class VanillaRagdollHook implements RagdollHook {
 
 			RagdollMapper.getCuboids(ragdoll, model.root(), new Counter());
 			ragdoll.addOverlayConnections(true);
+		} else if (model instanceof NautilusModel) {
+			Map<String, ModelPartIndex> indices = RagdollMapper.getModelPartIndices(model);
+			
+			int shellOffset = indices.get("shell").index;
+			int bodyOffset = indices.get("body").index;
+			int lowerMouthOffset = indices.get("lower_mouth").index;
+			int upperMouthOffset = indices.get("upper_mouth").index;
+			int innerMouthOffset = indices.get("inner_mouth").index;
+
+			ragdoll.addConnection(bodyOffset, shellOffset, true);
+			ragdoll.addConnection(lowerMouthOffset, shellOffset, true, true);
+			ragdoll.addConnection(upperMouthOffset, shellOffset, true, true);
+			ragdoll.addConnection(innerMouthOffset, shellOffset, true, true);
+
+			RagdollMapper.getCuboids(ragdoll, model.root(), new Counter());
 		}
 	}
 
@@ -1616,7 +1649,7 @@ public class VanillaRagdollHook implements RagdollHook {
 			while (blockifiedEntity.size() > 31 + 17 * 2) {
 				blockifiedEntity.remove(blockifiedEntity.size() - 1);
 			}
-		} else if (model instanceof TropicalFishModelB || model instanceof TropicalFishModelA || model instanceof SkeletonModel || model instanceof HorseModel ||
+		} else if (model instanceof TropicalFishLargeModel || model instanceof TropicalFishSmallModel || model instanceof SkeletonModel || model instanceof HorseModel ||
 				model instanceof LlamaModel || model instanceof DrownedModel || model instanceof IllagerModel || model instanceof VillagerModel || 
 				model instanceof EndermanModel) {
 			int count = RagdollMapper.countModelParts(entity, model);
@@ -1632,6 +1665,18 @@ public class VanillaRagdollHook implements RagdollHook {
 			while (blockifiedEntity.size() > count) {
 				blockifiedEntity.remove(blockifiedEntity.size() - 1);
 			}
+		} else if (model instanceof NautilusModel) {
+			Iterator<PhysicsEntity> it = blockifiedEntity.iterator();
+			
+			while (it.hasNext()) {
+				PhysicsEntity physicsEntity = it.next();
+
+				if (physicsEntity.feature instanceof SimpleEquipmentLayer) {
+					if (!(model instanceof SkeletonModel && physicsEntity.feature instanceof ItemInHandLayer)) {
+						it.remove();
+					}
+				}
+			}
 		}
 		
 		// remove unnecessary features
@@ -1639,7 +1684,7 @@ public class VanillaRagdollHook implements RagdollHook {
 		
 		while (it.hasNext()) {
 			PhysicsEntity physicsEntity = it.next();
-			
+
 			if (physicsEntity.feature instanceof HumanoidArmorLayer || physicsEntity.feature instanceof CustomHeadLayer || 
 					physicsEntity.feature instanceof WingsLayer || physicsEntity.feature instanceof ItemInHandLayer || 
 					physicsEntity.feature instanceof ArrowLayer || physicsEntity.feature instanceof Deadmau5EarsLayer || 
