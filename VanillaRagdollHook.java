@@ -64,6 +64,7 @@ import net.minecraft.client.model.monster.enderman.EndermanModel;
 import net.minecraft.client.model.monster.endermite.EndermiteModel;
 import net.minecraft.client.model.monster.ghast.GhastModel;
 import net.minecraft.client.model.monster.guardian.GuardianModel;
+import net.minecraft.client.model.monster.hoglin.BabyHoglinModel;
 import net.minecraft.client.model.monster.hoglin.HoglinModel;
 import net.minecraft.client.model.monster.illager.IllagerModel;
 import net.minecraft.client.model.monster.phantom.PhantomModel;
@@ -75,7 +76,8 @@ import net.minecraft.client.model.monster.silverfish.SilverfishModel;
 import net.minecraft.client.model.monster.skeleton.BoggedModel;
 import net.minecraft.client.model.monster.skeleton.SkeletonModel;
 import net.minecraft.client.model.monster.spider.SpiderModel;
-import net.minecraft.client.model.monster.strider.StriderModel;
+import net.minecraft.client.model.monster.strider.AdultStriderModel;
+import net.minecraft.client.model.monster.strider.BabyStriderModel;
 import net.minecraft.client.model.monster.vex.VexModel;
 import net.minecraft.client.model.monster.warden.WardenModel;
 import net.minecraft.client.model.monster.witch.WitchModel;
@@ -467,7 +469,7 @@ public class VanillaRagdollHook implements RagdollHook {
 				ragdoll.addConnection(leftLegOffset, bodyOffset, true);
 				// enable culling for body to avoid z-fighting for legs
 				// because the leg meshes get merged into the body mesh
-				ragdoll.bodies.get(bodyOffset).backfaceCulling = true;
+				ragdoll.bodies.get(bodyOffset).backfaceCulling(true);
 			} else {
 				ragdoll.addConnection(rightArmOffset, bodyOffset);
 				ragdoll.addConnection(leftArmOffset, bodyOffset);
@@ -918,7 +920,18 @@ public class VanillaRagdollHook implements RagdollHook {
 			
 			if (RagdollMapper.countModelParts(entity, model) < ragdoll.bodies.size())
 				ragdoll.addOverlayConnections(true);
-		} else if (model instanceof StriderModel) {
+		} else if (model instanceof BabyStriderModel) {
+			Map<String, ModelPartIndex> indices = RagdollMapper.getModelPartIndices(model);
+			int rightLegOffset = indices.get("right_leg").index;
+			int leftLegOffset = indices.get("left_leg").index;
+			int bodyOffset = indices.get("body").index;
+
+			ragdoll.addConnection(leftLegOffset, bodyOffset);
+			ragdoll.addConnection(rightLegOffset, bodyOffset);
+			ragdoll.addConnection(leftLegOffset, bodyOffset);
+
+			RagdollMapper.getCuboids(ragdoll, model.root(), new Counter());
+		} else if (model instanceof AdultStriderModel) {
 			Map<String, ModelPartIndex> indices = RagdollMapper.getModelPartIndices(model);
 			int rightLegOffset = indices.get("right_leg").index;
 			int leftLegOffset = indices.get("left_leg").index;
@@ -934,7 +947,7 @@ public class VanillaRagdollHook implements RagdollHook {
 			ragdoll.addConnection(indices.get("right_middle_bristle").index, bodyOffset, true);
 			ragdoll.addConnection(indices.get("left_middle_bristle").index, bodyOffset, true);
 
-			ragdoll.bodies.get(bodyOffset).backfaceCulling = false;
+			ragdoll.bodies.get(bodyOffset).backfaceCulling(false);
 		} else if (model instanceof RavagerModel) {
 			int rightFrontLegOffset = 0;
 			int rightHindLegOffset = 1;
@@ -1395,17 +1408,21 @@ public class VanillaRagdollHook implements RagdollHook {
 			ragdoll.addConnection(rightLegOffset, bodyOffset);
 			ragdoll.addConnection(leftLegOffset, bodyOffset);
 			
-			int rightHornOffset = indices.get("right_horn").index;
-			int leftHornOffset = indices.get("left_horn").index;
 			int rightEarOffset = indices.get("right_ear").index;
 			int leftEarOffset = indices.get("left_ear").index;
-			int maneOffset = indices.get("mane").index;
 			
-			ragdoll.addConnection(rightHornOffset, headOffset, true);
-			ragdoll.addConnection(leftHornOffset, headOffset, true);
+			if (!(model instanceof BabyHoglinModel)) {
+				int rightHornOffset = indices.get("right_horn").index;
+				int leftHornOffset = indices.get("left_horn").index;
+				int maneOffset = indices.get("mane").index;
+	
+				ragdoll.addConnection(maneOffset, bodyOffset, true);
+				ragdoll.addConnection(rightHornOffset, headOffset, true);
+				ragdoll.addConnection(leftHornOffset, headOffset, true);
+			}
+			
 			ragdoll.addConnection(rightEarOffset, headOffset);
 			ragdoll.addConnection(leftEarOffset, headOffset);
-			ragdoll.addConnection(maneOffset, bodyOffset, true);
 			
 			RagdollMapper.getCuboids(ragdoll, model.root(), new Counter());
 		} else if (model instanceof SalmonModel) {
@@ -1456,7 +1473,7 @@ public class VanillaRagdollHook implements RagdollHook {
 			if (model instanceof BabyAxolotlModel) {
 				// enable culling for body to avoid z-fighting for legs
 				// because the leg meshes get merged into the body mesh
-				ragdoll.bodies.get(bodyOffset).backfaceCulling = true;
+				ragdoll.bodies.get(bodyOffset).backfaceCulling(true);
 			}
 		} else if (model instanceof PhantomModel) {
 			int bodyOffset = 0;
@@ -1925,7 +1942,7 @@ public class VanillaRagdollHook implements RagdollHook {
 			while (blockifiedEntity.size() > 11) {
 				blockifiedEntity.remove(blockifiedEntity.size() - 1);
 			}
-		} else if (model instanceof StriderModel) {
+		} else if (model instanceof AdultStriderModel) {
 			while (blockifiedEntity.size() > 9) {
 				blockifiedEntity.remove(blockifiedEntity.size() - 1);
 			}
