@@ -6,7 +6,7 @@ Feel free to report any bugs here. Please only report bugs on the newest version
 ## Ocean 2.0
 From Pro v185 and onward you can now create and place custom ocean shader files in your shaderpacks (only supported with Iris). Simply place **physics_ocean_v2.vsh**/**physics_ocean_v2.gsh**/**physics_ocean_v2.fsh** (.gsh file not mandatory) shader files in the corresponding world folders in your shaderpack (you can also create custom shadow shader files with **physics_ocean_shadow_v2**). Here is a simple comparison from a traditional water shader changed to an ocean shader (thanks Emin for letting me share it, IMPORTANT: this is an example of Ocean Physics 1.0, please check the latest ocean.glsl for the Ocean Physics 2.0 implementation): https://www.diffchecker.com/24hNvzCu/ (Complementary Reimagined r5.1.1)
 
-For more details about the code check out the oceans.glsl file on this page.
+For more details about the code check out the https://github.com/haubna/PhysicsMod/blob/main/oceans.glsl file on this page.
 
 ## Snow
 Snow uses the entity ID (rendered with the entities shader) 829925 (uniform int entityId;).
