@@ -186,6 +186,8 @@ WavePixelData physics_wavePixel(
 
 
 // VERTEX STAGE
+in float physics_waviness;
+
 out vec3 physics_localPosition;
 out float physics_localWaviness;
 
