@@ -192,7 +192,7 @@ out vec3 physics_localPosition;
 out float physics_localWaviness;
 
 void main() {
-    // basic texture to determine how shallow/far away from the shore the water is
+    // basic value to determine how shallow/far away from the shore the water is
     physics_localWaviness = physics_waviness;
     // transform gl_Vertex (since it is the raw mesh, i.e. not transformed yet)
     float baseWaveHeight = physics_waveHeight(Position.xz, PHYSICS_ITERATIONS_OFFSET, physics_localWaviness, physics_gameTime);
