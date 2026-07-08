@@ -56,6 +56,30 @@ uniform sampler3D physics_foam;
 // just the generic minecraft lightmap, you can remove this and use the one supplied by Optifine/Iris
 uniform sampler2D physics_lightmap;
 
+// some functions for the dynamic ripples
+vec2 physics_rippleUv(const in vec2 position) {
+    vec2 eyePosition = position + vec2(physics_modelOffsetX, physics_modelOffsetZ);
+    return (eyePosition + vec2(physics_rippleRange)) / (physics_rippleRange * 2.0);
+}
+
+float physics_rippleUvMask(const in vec2 uv) {
+    if (uv.x < 0.0 || uv.y < 0.0 || uv.x > 1.0 || uv.y > 1.0) {
+        return 0.0;
+    }
+
+    float edge = min(min(uv.x, uv.y), min(1.0 - uv.x, 1.0 - uv.y));
+    return smoothstep(0.0, PHYSICS_RIPPLE_EDGE_FADE, edge);
+}
+
+float physics_rippleSampleRaw(const in vec2 position) {
+    vec2 uv = physics_rippleUv(position);
+    return texture(physics_ripples, uv).r * physics_rippleUvMask(uv);
+}
+
+float physics_rippleVertexHeight(const in vec2 position) {
+    return physics_rippleSampleRaw(position) * PHYSICS_RIPPLE_VERTEX_DISPLACEMENT;
+}
+
 float physics_waveHeight(vec2 position, int iterations, float factor, float time) {
     float adjustedFactor = clamp(factor * 2.0, 0.1, 1.0);
     position = (position - vec2(physics_waveOffsetX, physics_waveOffsetZ)) * PHYSICS_XZ_SCALE * physics_oceanWaveHorizontalScale;
@@ -195,8 +219,8 @@ void main() {
     // basic value to determine how shallow/far away from the shore the water is
     physics_localWaviness = physics_waviness;
     // transform gl_Vertex (since it is the raw mesh, i.e. not transformed yet)
-    float baseWaveHeight = physics_waveHeight(Position.xz, PHYSICS_ITERATIONS_OFFSET, physics_localWaviness, physics_gameTime);
-    float rippleHeight = physics_rippleVertexHeight(Position.xz);
+    float baseWaveHeight = physics_waveHeight(gl_Vertex.xz, PHYSICS_ITERATIONS_OFFSET, physics_localWaviness, physics_gameTime);
+    float rippleHeight = physics_rippleVertexHeight(gl_Vertex.xz);
     vec4 finalPosition = vec4(gl_Vertex.x, gl_Vertex.y + baseWaveHeight + rippleHeight, gl_Vertex.z, gl_Vertex.w);
     // pass this to the fragment shader to fetch the texture there for per fragment normals
     physics_localPosition = finalPosition.xyz;
