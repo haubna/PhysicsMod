@@ -1,26 +1,128 @@
 # Physics Mod
-Feel free to report any bugs here.
 
-# Shaders
+Welcome to the official repository for **Physics Mod**.
 
-## Ocean 2.0
-From Pro v185 and onward you can now create and place custom ocean shader files in your shaderpacks (only supported with Iris). Simply place **physics_ocean_v2.vsh**/**physics_ocean_v2.gsh**/**physics_ocean_v2.fsh** (.gsh file not mandatory) shader files in the corresponding world folders in your shaderpack (you can also create custom shadow shader files with **physics_ocean_shadow_v2**). Here is a simple comparison from a traditional water shader changed to an ocean shader (thanks Emin for letting me share it, IMPORTANT: this is an example of Ocean Physics 1.0, please check the latest ocean.glsl for the Ocean Physics 2.0 implementation): https://www.diffchecker.com/24hNvzCu/ (Complementary Reimagined r5.1.1)
+Found a problem? Feel free to [report a bug](../../issues) or open an issue with feedback.
 
-For more details about the code check out the https://github.com/haubna/PhysicsMod/blob/main/oceans.glsl file on this page.
-If you want to add support for versions prior to v185 you will need to call the files **physics__ocean.vsh** (without the v2) and so on. Example of the old ocean.glsl can be found here: https://github.com/haubna/PhysicsMod/blob/5202c88e0881969bc21b46c6a0559d0761afb175/oceans.glsl
+---
 
-## Snow
-Snow uses the entity ID (rendered with the entities shader) 829925 (uniform int entityId;).
+## Shaders
 
-# Ragdoll API (Physics Mod 2.2.3 and above)
-You can use it to add ragdoll physics to your mod entities. To make the physics work with your mod __USE__ the __ModelPart__ class for your custom entities and not create your own one, since I hook into this class.
-You will need to create a __RagdollHook__ and add it via __RagdollMapper.addHook(RagdollHook)__. A ragdoll hook example can be found in this repo. 
+### Ocean Physics 2.0
 
-## RagdollHook
-***filterCuboidsFromEntities*** is to filter excessive cubes from the model that can get created through some feature overlays in Minecraft and would cause multiple cube drops of the same model.
+Starting with **Physics Mod Pro v185**, shaderpack developers can create and include custom ocean shaders.
 
-***map*** is needed to create the connections between the cubes. If you are not sure which cubes should get connected you can get some info via __RagdollMapper.printModelParts(model)__.
+> [!NOTE]
+> Custom ocean shaders are currently supported only when using **Iris**.
 
-Thanks to fabmax for creating a PhysX JNI Wrapper: https://github.com/fabmax/physx-jni
+Add the following files to the corresponding world folders inside your shaderpack:
 
-Mod page: https://minecraftphysicsmod.com
+```text
+physics_ocean_v2.vsh
+physics_ocean_v2.gsh
+physics_ocean_v2.fsh
+```
+
+The `.gsh` geometry shader is optional.
+
+Custom shadow shaders are also supported using the following filename prefix:
+
+```text
+physics_ocean_shadow_v2
+```
+
+#### Example implementation
+
+The comparison below demonstrates how a traditional water shader was converted into an ocean shader:
+
+[View the shader comparison](https://www.diffchecker.com/24hNvzCu/)
+
+Special thanks to **Emin** for allowing me to share this example, which is based on **Complementary Reimagined r5.1.1**.
+
+> [!IMPORTANT]
+> This comparison uses **Ocean Physics 1.0**. For the current **Ocean Physics 2.0** implementation, refer to the latest [`oceans.glsl`](https://github.com/haubna/PhysicsMod/blob/main/oceans.glsl) file.
+
+#### Supporting versions before v185
+
+To support Physics Mod versions earlier than **v185**, use the legacy filenames without the `v2` suffix:
+
+```text
+physics_ocean.vsh
+physics_ocean.gsh
+physics_ocean.fsh
+```
+
+An older implementation of `oceans.glsl` is available here:
+
+[View the legacy `oceans.glsl` implementation](https://github.com/haubna/PhysicsMod/blob/5202c88e0881969bc21b46c6a0559d0761afb175/oceans.glsl)
+
+---
+
+### Snow
+
+Snow is rendered through the entity shader and uses the following entity ID:
+
+```glsl
+uniform int entityId;
+
+// Snow entity ID
+829925
+```
+
+Minecraft 26.2 and later only support it via the `mc_Entity` attribute. It also uses `829925` as ID.
+
+---
+
+## Ragdoll API
+
+> Available in **Physics Mod 2.2.3 and newer**.
+
+The Ragdoll API allows you to add ragdoll physics to entities from your own mod.
+
+### Requirements
+
+Your custom entities must use Minecraft's built-in `ModelPart` class.
+
+> [!WARNING]
+> Do not replace `ModelPart` with a custom implementation. Physics Mod hooks directly into this class to create the ragdoll physics.
+
+Create a `RagdollHook` and register it using:
+
+```java
+RagdollMapper.addHook(ragdollHook);
+```
+
+A complete `RagdollHook` example is available in this repository.
+
+### `RagdollHook` methods
+
+#### `filterCuboidsFromEntities`
+
+Use this method to remove excessive or duplicated cubes from an entity model.
+
+Some Minecraft features and rendering overlays can generate multiple cubes for the same model part. Without filtering, these may result in duplicated physics objects or multiple cube drops.
+
+#### `map`
+
+Use this method to define the connections between the model's cubes.
+
+When you are unsure which model parts should be connected, print the available model-part information with:
+
+```java
+RagdollMapper.printModelParts(model);
+```
+
+---
+
+## Credits
+
+Special thanks to **fabmax** for creating the PhysX JNI wrapper:
+
+[github.com/fabmax/physx-jni](https://github.com/fabmax/physx-jni)
+
+---
+
+## Links
+
+* [Official Physics Mod website](https://minecraftphysicsmod.com)
+* [Report bugs and issues](../../issues)
