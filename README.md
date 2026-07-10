@@ -52,7 +52,7 @@ physics_ocean.gsh
 physics_ocean.fsh
 ```
 
-An older implementation of `oceans.glsl` is available here:
+The old V1 implementation of `oceans.glsl` is available here:
 
 [View the legacy `oceans.glsl` implementation](https://github.com/haubna/PhysicsMod/blob/5202c88e0881969bc21b46c6a0559d0761afb175/oceans.glsl)
 
