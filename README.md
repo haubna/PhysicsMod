@@ -10,7 +10,7 @@ Found a problem? Feel free to [report a bug](../../issues) or open an issue with
 
 ### Ocean Physics 2.0
 
-Starting with **Physics Mod Pro v185**, shaderpack developers can create and include custom ocean shaders.
+Starting with **Physics Mod Pro v170**, shaderpack developers can create and include custom ocean shaders. The new v2 of Ocean Physics is only supported by **Physics Mod Pro v185** and upwards.
 
 > [!NOTE]
 > Custom ocean shaders are currently supported only when using **Iris**.
@@ -52,7 +52,7 @@ physics_ocean.gsh
 physics_ocean.fsh
 ```
 
-The old V1 implementation of `oceans.glsl` is available here:
+The old v1 implementation of `oceans.glsl` is available here:
 
 [View the legacy `oceans.glsl` implementation](https://github.com/haubna/PhysicsMod/blob/5202c88e0881969bc21b46c6a0559d0761afb175/oceans.glsl)
 
