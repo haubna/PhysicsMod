@@ -1,5 +1,5 @@
 # Physics Mod
-Feel free to report any bugs here. Please only report bugs on the newest version of the mod. Legacy versions of Minecraft will not get updates.
+Feel free to report any bugs here.
 
 # Shaders
 
