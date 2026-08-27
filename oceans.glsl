@@ -81,23 +81,24 @@ float physics_rippleVertexHeight(const in vec2 position) {
 }
 
 float physics_waveHeight(vec2 position, int iterations, float factor, float time) {
-    float adjustedFactor = clamp(factor * 2.0, 0.1, 1.0);
+    float waveFactor = max(factor, 0.0);
+    float adjustedFactor = clamp(waveFactor * 2.0, 0.1, 1.0);
     position = (position - vec2(physics_waveOffsetX, physics_waveOffsetZ)) * PHYSICS_XZ_SCALE * physics_oceanWaveHorizontalScale;
-	float iter = 0.0;
+    float iter = 0.0;
     float frequency = PHYSICS_FREQUENCY;
     float speed = PHYSICS_SPEED;
     float weight = 1.0;
     float height = 0.0;
     float waveSum = 0.0;
     float modifiedTime = time * PHYSICS_TIME_MULTIPLICATOR;
-    
+
     for (int i = 0; i < iterations; i++) {
         vec2 direction = vec2(sin(iter), cos(iter));
         float x = dot(direction, position) * frequency + modifiedTime * speed;
         float wave = exp(sin(x) - 1.0);
         float result = wave * cos(x);
         vec2 force = result * weight * direction;
-        
+
         position -= force * PHYSICS_DRAG_MULT * adjustedFactor;
         height += wave * weight;
         iter += PHYSICS_ITER_INC;
@@ -106,15 +107,27 @@ float physics_waveHeight(vec2 position, int iterations, float factor, float time
         frequency *= PHYSICS_FREQUENCY_MULT;
         speed *= PHYSICS_SPEED_MULT;
     }
-    
-    return height / waveSum * physics_oceanHeight * factor - physics_oceanHeight * factor * 0.5;
+
+    return height / waveSum * physics_oceanHeight * waveFactor - physics_oceanHeight * waveFactor * 0.5;
 }
 
-vec3 physics_waveNormal(const in vec2 position, const in vec2 direction, const in float factor, const in float time) {
+vec3 physics_waveNormal(
+    const in vec2 position,
+    const in vec2 direction,
+    const in float factor,
+    const in float time
+) {
     float oceanHeightFactor = physics_oceanHeight / 13.0;
-    float totalFactor = oceanHeightFactor * factor;
+    float waveFactor = max(factor, 0.0);
+    float totalFactor = oceanHeightFactor * waveFactor;
     vec3 waveNormal = normalize(vec3(direction.x * totalFactor, PHYSICS_NORMAL_STRENGTH, direction.y * totalFactor));
-    
+
+    // A negative waviness is the legacy sentinel for a flowing-water border.
+    // It disables ripple normals without changing solid-shore waviness.
+    if (factor < 0.0) {
+        return waveNormal;
+    }
+
     float rippleTexelSize = 1.0 / textureSize(physics_ripples, 0).x;
     float texelWorldSize = max((physics_rippleRange * 2.0) * rippleTexelSize, 0.001);
     float normalSampleDistance = min(texelWorldSize, PHYSICS_RIPPLE_NORMAL_SAMPLE_WORLD_DISTANCE);
@@ -125,7 +138,7 @@ vec3 physics_waveNormal(const in vec2 position, const in vec2 direction, const i
     float top = physics_rippleSampleRaw(position - vec2(0.0, normalSampleDistance));
     float bottom = physics_rippleSampleRaw(position + vec2(0.0, normalSampleDistance));
     float totalEffect = abs(center) + abs(left) + abs(right) + abs(top) + abs(bottom);
-    
+
     float rippleSlopeX = ((left - right) / (normalSampleDistance * 2.0)) * PHYSICS_RIPPLE_NORMAL_STRENGTH;
     float rippleSlopeZ = ((top - bottom) / (normalSampleDistance * 2.0)) * PHYSICS_RIPPLE_NORMAL_STRENGTH;
     float rippleBlend = smoothstep(0.006, 0.10, totalEffect) * PHYSICS_RIPPLE_NORMAL_MAX_BLEND;
@@ -149,7 +162,8 @@ WavePixelData physics_wavePixel(
     const in float iterations,
     const in float time
 ) {
-    float adjustedFactor = clamp(factor * 2.0, 0.1, 1.0);
+    float waveFactor = max(factor, 0.0);
+    float adjustedFactor = clamp(waveFactor * 2.0, 0.1, 1.0);
     vec2 wavePos = (position.xy - vec2(physics_waveOffsetX, physics_waveOffsetZ)) * PHYSICS_XZ_SCALE * physics_oceanWaveHorizontalScale;
     float iter = 0.0;
     float frequency = PHYSICS_FREQUENCY;
@@ -159,15 +173,15 @@ WavePixelData physics_wavePixel(
     float waveSum = 0.0;
     float modifiedTime = time * PHYSICS_TIME_MULTIPLICATOR;
     vec2 dx = vec2(0.0);
-    
+
     for (int i = 0; i < iterations; i++) {
         vec2 direction = vec2(sin(iter), cos(iter));
         float x = dot(direction, wavePos) * frequency + modifiedTime * speed;
         float wave = exp(sin(x) - 1.0);
         float result = wave * cos(x);
         vec2 force = result * weight * direction;
-        
-        dx += force / pow(weight, PHYSICS_W_DETAIL); 
+
+        dx += force / pow(weight, PHYSICS_W_DETAIL);
         wavePos -= force * PHYSICS_DRAG_MULT * adjustedFactor;
         height += wave * weight;
         iter += PHYSICS_ITER_INC;
@@ -176,42 +190,40 @@ WavePixelData physics_wavePixel(
         frequency *= PHYSICS_FREQUENCY_MULT;
         speed *= PHYSICS_SPEED_MULT;
     }
-    
+
     WavePixelData data;
     data.direction = -vec2(dx / pow(waveSum, 1.0 - PHYSICS_W_DETAIL));
     data.worldPos = wavePos / physics_oceanWaveHorizontalScale / PHYSICS_XZ_SCALE;
-    float baseHeight = height / waveSum * physics_oceanHeight * factor - physics_oceanHeight * factor * 0.5;
-    float rippleHeight = physics_rippleVertexHeight(position);
+    float baseHeight = height / waveSum * physics_oceanHeight * waveFactor - physics_oceanHeight * waveFactor * 0.5;
+    float rippleHeight = factor < 0.0 ? 0.0 : physics_rippleVertexHeight(position);
     data.height = baseHeight + rippleHeight;
-    
-    data.normal = physics_waveNormal(position, data.direction, max(0.1, factor), time);
+
+    data.normal = physics_waveNormal(position, data.direction, factor, time);
 
     float waveAmplitude = data.height * pow(max(data.normal.y, 0.0), 4.0);
     float rippleFoam = smoothstep(0.10, 0.38, abs(rippleHeight));
-    vec2 waterUV = mix(position - vec2(physics_waveOffsetX, physics_waveOffsetZ), data.worldPos, clamp(factor * 2.0, 0.2, 1.0));
-    
+    vec2 waterUV = mix(position - vec2(physics_waveOffsetX, physics_waveOffsetZ), data.worldPos, clamp(waveFactor * 2.0, 0.2, 1.0));
+
     vec2 s1 = textureLod(physics_foam, vec3(waterUV * 0.26, physics_globalTime / 360.0), 0).rg;
     vec2 s2 = textureLod(physics_foam, vec3(waterUV * 0.02, physics_globalTime / 360.0 + 0.5), 0).rg;
     vec2 s3 = textureLod(physics_foam, vec3(waterUV * 0.1, physics_globalTime / 360.0 + 1.0), 0).rg;
-    
+
     float waterSurfaceNoise = s1.r * s2.r * s3.r * 2.8 * physics_foamAmount;
     waveAmplitude = clamp(waveAmplitude * 1.2, 0.0, 1.0);
     waterSurfaceNoise = (1.0 - waveAmplitude) * waterSurfaceNoise + waveAmplitude * physics_foamAmount;
-    
+
     float worleyNoise = 0.2 + 0.8 * s1.g * (1.0 - s2.g);
     float waterFoamMinSmooth = 0.45;
     float waterFoamMaxSmooth = 2.0;
     waterSurfaceNoise = smoothstep(waterFoamMinSmooth, 1.0, waterSurfaceNoise) * worleyNoise;
-    
+
     data.foam = clamp(waterFoamMaxSmooth * waterSurfaceNoise * physics_foamOpacity, 0.0, 1.0);
-    
+
     return data;
 }
 
-
 // VERTEX STAGE
 in float physics_waviness;
-
 out vec3 physics_localPosition;
 out float physics_localWaviness;
 
@@ -220,11 +232,11 @@ void main() {
     physics_localWaviness = physics_waviness;
     // transform gl_Vertex (since it is the raw mesh, i.e. not transformed yet)
     float baseWaveHeight = physics_waveHeight(gl_Vertex.xz, PHYSICS_ITERATIONS_OFFSET, physics_localWaviness, physics_gameTime);
-    float rippleHeight = physics_rippleVertexHeight(gl_Vertex.xz);
+    float rippleHeight = physics_localWaviness < 0.0 ? 0.0 : physics_rippleVertexHeight(gl_Vertex.xz);
     vec4 finalPosition = vec4(gl_Vertex.x, gl_Vertex.y + baseWaveHeight + rippleHeight, gl_Vertex.z, gl_Vertex.w);
     // pass this to the fragment shader to fetch the texture there for per fragment normals
     physics_localPosition = finalPosition.xyz;
-    
+
     // now use finalPosition instead of gl_Vertex
 }
 
@@ -233,7 +245,12 @@ in vec3 physics_localPosition;
 in float physics_localWaviness;
 
 void main() {
-    WavePixelData wave = physics_wavePixel(physics_localPosition.xz, physics_localWaviness, physics_iterationsNormal, physics_gameTime);
-    
+    WavePixelData wave = physics_wavePixel(
+        physics_localPosition.xz,
+        physics_localWaviness,
+        physics_iterationsNormal,
+        physics_gameTime
+    );
+
     // access the wave struct data however you want, wave.normal is in world space, wave.foam is the final foam amount
 }
