@@ -118,7 +118,7 @@ vec3 physics_waveNormal(
     const in float time
 ) {
     float oceanHeightFactor = physics_oceanHeight / 13.0;
-    float waveFactor = max(factor, 0.0);
+    float waveFactor = max(factor, 0.1);
     float totalFactor = oceanHeightFactor * waveFactor;
     vec3 waveNormal = normalize(vec3(direction.x * totalFactor, PHYSICS_NORMAL_STRENGTH, direction.y * totalFactor));
 
