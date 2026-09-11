@@ -8,53 +8,14 @@ Found a problem? Feel free to [report a bug](../../issues) or open an issue with
 
 ## Shaders
 
-### Ocean Physics 2.0
+### Ocean Physics 3.0
 
-Starting with **Physics Mod Pro v170**, shaderpack developers can create and include custom ocean shaders. The new v2 of Ocean Physics is only supported by **Physics Mod Pro v185** and upwards.
+Starting with **Physics Mod Pro v170**, shaderpack developers can create and include custom ocean shaders. The new v3 of Ocean Physics is only supported by **Physics Mod Pro v188** and upwards. Support for Ocean Physics v2 got entirely replaced by v3 for simplicity reasons.
 
 > [!NOTE]
 > Custom ocean shaders are currently supported only when using **Iris**.
 
-Add the following files to the corresponding world folders inside your shaderpack:
-
-```text
-physics_ocean_v2.vsh
-physics_ocean_v2.gsh
-physics_ocean_v2.fsh
-```
-
-The `.gsh` geometry shader is optional.
-
-Custom shadow shaders are also supported using the following filename prefix:
-
-```text
-physics_ocean_shadow_v2
-```
-
-#### Example implementation
-
-The comparison below demonstrates how a traditional water shader was converted into an ocean shader:
-
-[View the shader comparison](https://www.diffchecker.com/24hNvzCu/)
-
-Special thanks to **Emin** for allowing me to share this example, which is based on **Complementary Reimagined r5.1.1**.
-
-> [!IMPORTANT]
-> This comparison uses **Ocean Physics 1.0**. For the current **Ocean Physics 2.0** implementation, refer to the latest [`oceans.glsl`](https://github.com/haubna/PhysicsMod/blob/main/oceans.glsl) file.
-
-#### Supporting versions before v185
-
-To support Physics Mod versions earlier than **v185**, use the legacy filenames without the `v2` suffix:
-
-```text
-physics_ocean.vsh
-physics_ocean.gsh
-physics_ocean.fsh
-```
-
-The old v1 implementation of `oceans.glsl` is available here:
-
-[View the legacy `oceans.glsl` implementation](https://github.com/haubna/PhysicsMod/blob/5202c88e0881969bc21b46c6a0559d0761afb175/oceans.glsl)
+Check out [`oceans.glsl`](https://github.com/haubna/PhysicsMod/blob/main/oceans.glsl) on how to add support. There is one function for the vertex stage and one for the fragment stage that you have to add. Custom tessellation stages are currently not supported (it generates them dynamically). If you want to support versions prior to v188 check out [`this`](https://github.com/haubna/PhysicsMod/blob/main/LEGACY_OCEAN.md).
 
 ---
 
