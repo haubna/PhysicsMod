@@ -8,7 +8,7 @@ Put these calls directly in the shaderpack's normal `gbuffers_water` and
 `shadow` stages. Do not add a separate versioned ocean file or include a
 Physics Mod file. Physics Mod detects the `PHYSICS_OCEAN_V3` references and
 supplies all functions needed: two functions for the vertex stage and one
-for the fragment stage. This adds support for both ocean rendering techniques.
+for the fragment stage. This adds support for both ocean rendering techniques (legacy and FFT).
 
 ## Vertex stage
 
