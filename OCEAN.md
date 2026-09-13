@@ -2,8 +2,6 @@
 
 **Requires Physics Mod v188 or above.**
 
-**This file is public domain, so use it however you want!**
-
 Put these calls directly in the shaderpack's normal `gbuffers_water` and
 `shadow` stages. Do not add a separate versioned ocean file or include a
 Physics Mod file. Physics Mod detects the `PHYSICS_OCEAN_V3` references and
