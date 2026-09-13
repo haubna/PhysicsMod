@@ -16,7 +16,7 @@ Files: `gbuffers_water.vsh` and `shadow.vsh`
 
 ```glsl
 #ifdef PHYSICS_OCEAN_V3
-  vec4 finalPosition = physics_oceanVertex(gl_Vertex);
+  vec4 physics_position = physics_oceanVertex(gl_Vertex); // call it at the start and use this as your new gl_Vertex
 #endif
 ```
 
